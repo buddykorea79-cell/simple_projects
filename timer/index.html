@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="ko" data-theme="apricot">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f8f7f3">
+  <meta name="description" content="지금 이 순간에 집중하세요. 분·초 설정, 1~10분 빠른 시작, 보색 테마와 전체 화면을 지원하는 큰 글씨 타이머.">
+  <title>지금, 타이머</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='18' fill='%23ffbd88'/%3E%3Ccircle cx='32' cy='35' r='20' fill='none' stroke='%231d385b' stroke-width='5'/%3E%3Cpath d='M32 23v13l9 5M25 7h14' fill='none' stroke='%231d385b' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <svg class="svg-defs" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs>
+    <symbol id="i-timer" viewBox="0 0 24 24"><circle cx="12" cy="14" r="8"/><path d="M12 10v4l3 2M9 2h6M12 2v4M19 6l2-2"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="m9 5 11 7-11 7Z"/></symbol>
+    <symbol id="i-pause" viewBox="0 0 24 24"><path d="M8 5v14M16 5v14"/></symbol>
+    <symbol id="i-reset" viewBox="0 0 24 24"><path d="M3 10a9 9 0 1 1 1 8M3 4v6h6"/></symbol>
+    <symbol id="i-expand" viewBox="0 0 24 24"><path d="M8 3H3v5M16 3h5v5M21 16v5h-5M8 21H3v-5"/></symbol>
+    <symbol id="i-shrink" viewBox="0 0 24 24"><path d="M3 8h5V3M16 3v5h5M21 16h-5v5M8 21v-5H3"/></symbol>
+    <symbol id="i-volume" viewBox="0 0 24 24"><path d="m11 4-6 5H2v6h3l6 5ZM15 8a6 6 0 0 1 0 8M18 5a10 10 0 0 1 0 14"/></symbol>
+    <symbol id="i-muted" viewBox="0 0 24 24"><path d="m11 4-6 5H2v6h3l6 5ZM16 9l6 6M22 9l-6 6"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-5-5 5 5-5 5"/></symbol>
+    <symbol id="i-back" viewBox="0 0 24 24"><path d="M19 12H5m6-6-6 6 6 6"/></symbol>
+    <symbol id="i-help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3M12 17h.01"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+  </defs></svg>
+
+  <div class="app">
+    <header class="header">
+      <a class="home-link" href="../" title="동키의 잡동사니로 돌아가기"><svg><use href="#i-back"/></svg><span>동키의 잡동사니</span></a>
+      <a class="brand" href="./" aria-label="지금, 타이머 홈"><span class="brand-mark"><svg><use href="#i-timer"/></svg></span><span>지금<span class="brand-comma">,</span> 타이머</span></a>
+      <span class="header-note">오롯이, 지금 이 시간에.</span>
+      <div class="header-actions">
+        <button id="guide-toggle" class="utility-button" type="button" aria-haspopup="dialog" title="사용 방법"><svg><use href="#i-help"/></svg><span>사용 방법</span></button>
+        <button id="sound-toggle" class="utility-button" type="button" aria-label="완료 알림 소리" aria-pressed="true" title="완료 알림 소리 켜짐"><svg><use href="#i-volume"/></svg><span id="sound-label">소리 켜짐</span></button>
+        <button id="fullscreen-toggle" class="utility-button" type="button" aria-label="전체 화면" aria-pressed="false" title="전체 화면 (F)"><svg><use href="#i-expand"/></svg><span id="fullscreen-label">전체 화면</span></button>
+      </div>
+    </header>
+
+    <main>
+      <section class="timer-stage" aria-label="타이머">
+        <div class="stage-top"><span class="stage-caption">MAKE TIME FOR WHAT MATTERS</span><span id="state-badge" class="state-badge"><span class="status-dot"></span><span id="state-label">준비</span></span></div>
+        <div class="clock-area">
+          <p id="timer-message" class="timer-message">작은 집중이 쌓이는 시간</p>
+          <div id="time-display" class="time-display" role="timer" aria-label="5분 0초 남음" aria-live="off"><span id="minutes-display">05</span><span class="colon">:</span><span id="seconds-display">00</span></div>
+          <p id="duration-label" class="duration-label">5분 타이머</p>
+        </div>
+        <div class="playback">
+          <button id="reset-button" type="button" class="reset-button" aria-label="처음 시간으로 초기화" title="초기화 (R)"><svg><use href="#i-reset"/></svg></button>
+          <button id="start-button" type="button" class="start-button"><svg id="start-icon"><use href="#i-play"/></svg><span id="start-label">시작하기</span><span class="key-hint">SPACE</span></button>
+          <span class="playback-balance" aria-hidden="true"></span>
+        </div>
+        <div id="progress-track" class="progress-track" role="progressbar" aria-label="남은 시간" aria-valuemin="0" aria-valuemax="300" aria-valuenow="300"><div id="progress-fill" class="progress-fill"></div></div>
+      </section>
+
+      <div class="settings-grid">
+        <section class="quick-section" aria-labelledby="quick-heading">
+          <div class="section-heading"><h1 id="quick-heading">빠른 시작</h1><span>한 번 누르면 바로 시작해요</span></div>
+          <div id="presets" class="preset-grid" aria-label="1분부터 10분까지 빠른 시작"></div>
+        </section>
+        <section class="custom-section" aria-labelledby="custom-heading">
+          <div class="section-heading"><h2 id="custom-heading">직접 설정</h2><span>나만의 속도로</span></div>
+          <form id="custom-form" class="custom-form" novalidate>
+            <label class="number-field"><input id="minutes-input" name="minutes" type="number" min="0" max="999" step="1" value="5" inputmode="numeric" aria-label="분" required><span>분</span></label>
+            <span class="input-colon" aria-hidden="true">:</span>
+            <label class="number-field"><input id="seconds-input" name="seconds" type="number" min="0" max="59" step="1" value="0" inputmode="numeric" aria-label="초" required><span>초</span></label>
+            <button type="submit" class="apply-button" aria-label="입력한 시간으로 설정" title="입력한 시간으로 설정"><svg><use href="#i-arrow"/></svg></button>
+          </form>
+          <p id="input-error" class="input-error" role="alert"></p>
+        </section>
+      </div>
+
+      <section class="theme-section" aria-labelledby="theme-heading">
+        <div class="theme-heading"><h2 id="theme-heading">오늘의 색</h2><span>눈에 선명한 보색 조합</span></div>
+        <div id="themes" class="theme-options" aria-label="색상 테마"></div>
+        <span id="theme-name" class="theme-name">살구와 네이비</span>
+      </section>
+    </main>
+    <footer class="footer"><span>한 번에 하나씩, 충분해요.</span><div><span><kbd>Space</kbd> 시작 · 일시정지</span><span><kbd>R</kbd> 초기화</span><span><kbd>F</kbd> 전체 화면</span></div></footer>
+  </div>
+  <dialog id="guide" class="guide" aria-labelledby="guide-title">
+    <div class="guide-head">
+      <h2 id="guide-title">지금, 타이머 사용 방법</h2>
+      <button id="guide-close" class="guide-close" type="button" aria-label="닫기"><svg><use href="#i-close"/></svg></button>
+    </div>
+    <div class="guide-body">
+      <ol class="guide-steps">
+        <li><b>빠르게 시작하기</b><span><em>빠른 시작</em>의 1~10분 버튼을 누르면 그 시간으로 바로 카운트다운이 시작돼요.</span></li>
+        <li><b>원하는 시간 정하기</b><span><em>직접 설정</em>에 분(0~999)과 초(0~59)를 넣고 화살표 버튼(또는 Enter)을 누른 뒤 <em>시작하기</em>를 누르세요.</span></li>
+        <li><b>멈추고 다시 하기</b><span><em>일시정지</em> 후 <em>계속하기</em>로 이어 가고, 왼쪽 동그라미 버튼으로 처음 시간으로 되돌려요.</span></li>
+        <li><b>크게 띄우기</b><span><em>전체 화면</em>을 누르면 타이머만 크게 보여요. 발표장·교실 화면에 띄우기 좋아요.</span></li>
+        <li><b>색 바꾸기</b><span><em>오늘의 색</em>에서 눈에 잘 띄는 보색 조합을 골라요. 고른 색은 다음에도 기억해요.</span></li>
+      </ol>
+      <h3>단축키</h3>
+      <p class="guide-keys"><span><kbd>Space</kbd> 시작 · 일시정지</span><span><kbd>R</kbd> 초기화</span><span><kbd>F</kbd> 전체 화면</span><span><kbd>Esc</kbd> 전체 화면 끄기</span></p>
+      <h3>알아 두면 좋아요</h3>
+      <ul>
+        <li>시간이 다 되면 알림음이 3번 울려요. 오른쪽 위 <em>소리</em> 버튼으로 끄고 켤 수 있어요.</li>
+        <li>다른 탭을 보고 있어도 실제 시계 기준으로 정확하게 흘러가요.</li>
+        <li>타이머가 도는 동안에는 화면이 꺼지지 않게 막아 줘요(지원하는 브라우저에서).</li>
+      </ul>
+    </div>
+  </dialog>
+  <p id="announcer" class="sr-only" role="status" aria-live="polite"></p>
+  <div id="toast" class="toast" role="status" hidden></div>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
