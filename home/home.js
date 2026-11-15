@@ -1,3 +1,5 @@
+import './seal-stars.js';
+
 // 서랍에 새 잡동사니를 넣으려면 이 배열에 항목을 하나 추가하면 됩니다.
 // external: true 이면 새 창(탭)으로 열립니다.
 const projects = [
@@ -28,6 +30,15 @@ const projects = [
     accent: '#8fb0d8',
     icon: '<path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 9 9 0 0 1-3.9-.9L3 20.5l1.5-4.3A8.4 8.4 0 1 1 21 11.5z"/><path d="M8.5 11.5h.01M12 11.5h.01M15.5 11.5h.01"/>',
     steps: ['강사는 강의실 열기', '학생은 방 코드로 입장', '강의 중 실시간 소통'],
+  },
+  {
+    href: './cuenote/',
+    name: 'CueNote',
+    desc: '마크다운 한 장으로 무대를 진행하는 행사 큐시트 앱. 안드로이드 앱과 AI 스킬·샘플 MD를 내려받아요.',
+    tags: ['안드로이드 앱', '큐시트', 'AI 스킬'],
+    accent: '#c9a7ec',
+    icon: '<path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5"/><path d="M10 12.5v5l4.5-2.5z"/>',
+    steps: ['APK 내려받아 설치', '행사 MD 불러오기', '단계별 원고·타이머로 진행'],
   },
 ];
 
@@ -62,6 +73,6 @@ projects.forEach((p, i) => {
 });
 
 const soon = document.createElement('div');
-soon.className = 'soon';
+soon.className = `soon r${projects.length % 3}`;   // 3열에서 마지막 줄의 남은 칸을 채운다
 soon.innerHTML = `<span class="soon-no">No. ${String(projects.length + 1).padStart(2, '0')}</span><span class="soon-text">다음 잡동사니를 서랍에 넣는 중이에요.</span><span class="soon-plus" aria-hidden="true">+</span>`;
 grid.append(soon);

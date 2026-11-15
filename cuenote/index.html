@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f7f5fa">
+  <meta name="description" content="CueNote(큐노트) — 마크다운 한 장으로 무대를 진행하는 행사 큐시트 앱. 안드로이드 앱, AI 스킬, 샘플 MD 다운로드와 설치·사용 방법.">
+  <title>CueNote · 동키의 잡동사니</title>
+  <link rel="icon" type="image/png" href="./images/icon-512.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Noto+Sans+KR:wght@400;500;700;800;900&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./cuenote.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="wrap topbar-in">
+      <a class="back" href="../" title="동키의 잡동사니로 돌아가기"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"/></svg><span>동키의 잡동사니</span></a>
+      <a class="brand" href="#top"><img src="./images/icon-512.png" alt="" width="30" height="30">CueNote</a>
+      <nav class="nav" aria-label="페이지 안내">
+        <a href="#intro">소개</a><a href="#download">다운로드</a><a href="#install">설치</a><a href="#usage">사용법</a><a href="#faq">질문</a>
+      </nav>
+      <a class="btn sm primary nav-cta" href="#download">내려받기</a>
+    </div>
+  </header>
+
+  <main id="top">
+    <!-- ── 히어로 ── -->
+    <section class="hero">
+      <div class="iri-blob b1" aria-hidden="true"></div>
+      <div class="iri-blob b2" aria-hidden="true"></div>
+      <div class="wrap hero-in">
+        <div class="hero-text">
+          <img class="hero-icon" src="./images/icon-512.png" alt="CueNote 아이콘" width="84" height="84">
+          <p class="label">CueNote · 큐노트 <span class="ver">v<b data-version>1.3.5</b></span></p>
+          <h1>마크다운 한 장으로<br><span class="iri-text">무대를 진행하세요</span></h1>
+          <p class="lead">행사 큐시트를 <code>.md</code> 한 파일로 만들면 전체 일정, 단계별 원고·슬라이드·타이머가 휴대폰 하나에 담겨요. 사회자·무대감독·발표자를 위한 현장 진행 앱이에요.</p>
+          <div class="hero-actions">
+            <a class="btn primary big" data-file="apk"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m-5-5 5 5 5-5M5 21h14"/></svg>안드로이드 앱 내려받기</a>
+            <a class="btn ghost big" href="#usage">사용 방법 보기</a>
+          </div>
+          <p class="hero-meta">APK <b data-size="apk">17.1 MB</b><i>·</i>Android <span data-minandroid>7.0</span> 이상<i>·</i>AI 스킬·샘플 MD 함께 제공</p>
+        </div>
+        <div class="hero-phones" aria-hidden="true">
+          <div class="phone back"><img src="./images/shot-home.png" alt="" width="390" height="844"></div>
+          <div class="phone front"><img src="./images/shot-script.png" alt="" width="390" height="844"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── 소개 ── -->
+    <section id="intro" class="section">
+      <div class="wrap">
+        <div class="sec-head">
+          <p class="label">Introduction</p>
+          <h2>현장에서 필요한 건 전부, 한 화면에</h2>
+          <p class="sub">식순표·사회자 대본·발표 노트·연출 큐가 여기저기 흩어져 있었다면, 이제 마크다운 한 파일로 모아 단계별로 넘기며 진행하세요.</p>
+        </div>
+        <div class="features">
+          <article><span class="f-icon"><svg viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg></span><h3>홈 일정</h3><p>시작 시각만 적으면 단계마다 예정 시각을 자동 계산해요. 배정 시간과 실제 걸린 시간을 나란히 봐요.</p></article>
+          <article><span class="f-icon"><svg viewBox="0 0 24 24"><path d="M4 4h16v12H4zM8 20h8M12 16v4"/></svg></span><h3>원고 · 슬라이드</h3><p>인사말·나레이션 원고는 한 화면씩, 발표는 슬라이드 한 장씩 넘겨요. 연출 큐·주의 박스·체크리스트도 함께.</p></article>
+          <article><span class="f-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9 2h6"/></svg></span><h3>듀얼 타이머</h3><p>지금 단계의 남은 시간(REMAINING)과 행사 전체 경과(TOTAL)를 동시에. 벽시계 기준이라 정확해요.</p></article>
+          <article><span class="f-icon"><svg viewBox="0 0 24 24"><path d="M8 3H3v5M16 3h5v5M21 16v5h-5M8 21H3v-5"/></svg></span><h3>집중 모드</h3><p>상·하단 바를 숨기고 원고만 크게. 화면 아래·위를 눌러 넘기고, 원고는 배정 시간에 맞춰 자동 스크롤.</p></article>
+          <article><span class="f-icon"><svg viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M7 14h10"/></svg></span><h3>페이지 터너 · 키보드</h3><p>블루투스 페이지 터너나 키보드로 손대지 않고 진행해요. 숫자 키로 원하는 단계에 바로 입장.</p></article>
+          <article><span class="f-icon"><svg viewBox="0 0 24 24"><path d="m12 3 1.9 5.8L20 10l-5 3.6L16.5 20 12 16.5 7.5 20 9 13.6 4 10l6.1-1.2z"/></svg></span><h3>AI 기획</h3><p>말로 설명하거나 행사 계획서를 올리면 AI 가 CueNote 행사로 만들어 줘요. 다른 AI 용 스킬도 제공해요.</p></article>
+        </div>
+        <figure class="tablet">
+          <div class="tablet-frame"><img src="./images/shot-tablet.png" alt="태블릿 가로 화면의 CueNote 홈: 창립 30주년 기념식 8단계 일정과 남은 시간 타이머" width="1180" height="820" loading="lazy"></div>
+          <figcaption>태블릿·폴더블의 넓은 화면에서도 그대로 — 진행 중인 단계와 남은 시간을 한눈에.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- ── 다운로드 ── -->
+    <section id="download" class="section tinted">
+      <div class="wrap">
+        <div class="sec-head">
+          <p class="label">Download</p>
+          <h2>다운로드</h2>
+          <p class="sub">앱과 함께 AI 스킬, 샘플 행사 MD, 사용 설명서를 받을 수 있어요. 스킬과 MD 파일은 <b>한 번에 받기</b>로 모두 묶어서 받을 수도 있어요.</p>
+        </div>
+
+        <div class="dl-main">
+          <div class="dl-app">
+            <img src="./images/icon-512.png" alt="" width="72" height="72">
+            <div class="dl-app-text">
+              <span class="label">Android App</span>
+              <h3>CueNote <span data-version>1.3.5</span></h3>
+              <p>APK <b data-size="apk">17.1 MB</b> · Android <span data-minandroid>7.0</span> 이상 · <span data-updated>2026-11-15</span> 업데이트</p>
+            </div>
+            <a class="btn primary big" data-file="apk"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m-5-5 5 5 5-5M5 21h14"/></svg>APK 내려받기</a>
+          </div>
+          <div class="dl-bundle">
+            <div>
+              <span class="label">All-in-one</span>
+              <h3>스킬 + MD 한 번에 받기</h3>
+              <p>사용 설명서, AI 스킬(SKILL.md · claude.ai 용 zip), 샘플 행사 MD 2개를 zip 하나로. <b data-size="bundle">16 KB</b></p>
+            </div>
+            <a class="btn dark" data-file="bundle"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 8v13H3V8M1 3h22v5H1zM10 12h4"/></svg>CueNote_자료모음.zip</a>
+          </div>
+        </div>
+
+        <div class="dl-groups">
+          <div class="dl-group">
+            <h4><span class="dot ai"></span>AI 스킬</h4>
+            <a class="dl-item" data-file="skillZip"><span class="ext">ZIP</span><span class="dl-text"><b>cuenote-md-skill.zip</b><small>claude.ai 스킬 업로드용</small></span><span class="dl-size" data-size="skillZip"></span></a>
+            <a class="dl-item" data-file="skillMd"><span class="ext">MD</span><span class="dl-text"><b>SKILL.md</b><small>ChatGPT·Gemini 지침 / Claude Code</small></span><span class="dl-size" data-size="skillMd"></span></a>
+            <button class="copy-skill" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 9h11v11H9zM5 15H4V4h11v1"/></svg><span>SKILL.md 내용 복사</span></button>
+          </div>
+          <div class="dl-group">
+            <h4><span class="dot md"></span>샘플 행사 MD</h4>
+            <a class="dl-item" data-file="ceremony"><span class="ext">MD</span><span class="dl-text"><b>창립 30주년 기념식</b><small>섹션·일정표·원고·슬라이드 발표</small></span><span class="dl-size" data-size="ceremony"></span></a>
+            <a class="dl-item" data-file="showcase"><span class="ext">MD</span><span class="dl-text"><b>신제품 런칭 쇼케이스</b><small>장면 5개 · 기술 큐 뱃지 예시</small></span><span class="dl-size" data-size="showcase"></span></a>
+          </div>
+          <div class="dl-group">
+            <h4><span class="dot doc"></span>문서</h4>
+            <a class="dl-item" data-file="guide"><span class="ext">MD</span><span class="dl-text"><b>CueNote 사용 설명서</b><small>설치·진행·문법·AI 를 한 파일에</small></span><span class="dl-size" data-size="guide"></span></a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── 설치 ── -->
+    <section id="install" class="section">
+      <div class="wrap">
+        <div class="sec-head">
+          <p class="label">Installation</p>
+          <h2>설치 방법</h2>
+        </div>
+        <div class="install">
+          <div class="install-card">
+            <h3><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="2" width="12" height="20" rx="2.5"/><path d="M11 18h2"/></svg>안드로이드 앱 설치</h3>
+            <ol class="steps">
+              <li><b>APK 내려받기</b><span>휴대폰 브라우저에서 위의 <em>APK 내려받기</em>를 눌러요. PC 에서 받았다면 메신저 “나에게 보내기”나 USB 로 휴대폰에 옮겨요.</span></li>
+              <li><b>파일 열기</b><span>다운로드 알림이나 <em>내 파일 → 다운로드</em>에서 <code data-apkname>CueNote-1.3.5.apk</code> 를 눌러요.</span></li>
+              <li><b>“출처를 알 수 없는 앱” 허용</b><span>처음이라면 <em>설정</em>으로 이동하는 안내가 나와요. 사용 중인 브라우저(또는 내 파일 앱)의 <em>이 출처 허용</em>을 켜고 돌아와요.</span></li>
+              <li><b>설치</b><span><em>설치</em>를 누르면 홈 화면에 CueNote 아이콘이 생겨요. 첫 화면의 <em>샘플 행사 열기</em>로 바로 연습해 보세요.</span></li>
+            </ol>
+            <div class="note"><b>Play 프로텍트 경고가 나오면</b> 스토어를 거치지 않은 설치 파일이라 그래요. <em>세부정보 더보기 → 무시하고 설치</em>를 눌러요. 설치가 끝나면 “출처를 알 수 없는 앱” 허용은 다시 꺼 두는 것이 안전해요.</div>
+            <div class="note soft"><b>업데이트</b> 새 버전 APK 를 같은 방법으로 설치하면 기존 앱 위에 덮어써져요.</div>
+          </div>
+          <div class="install-card">
+            <h3><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 1.9 5.8L20 10l-5 3.6L16.5 20 12 16.5 7.5 20 9 13.6 4 10l6.1-1.2z"/></svg>AI 스킬 설치 <small>다른 AI 에서 CueNote MD 만들기</small></h3>
+            <div class="skill-ways">
+              <div><span class="pill">claude.ai</span><p><em>설정 → 기능 → 스킬</em>에서 <code>cuenote-md-skill.zip</code> 을 올려요. 대화에서 “CueNote 행사 MD 로 만들어 줘”.</p></div>
+              <div><span class="pill">ChatGPT · Gemini</span><p>GPT·프로젝트·Gem 의 <em>지침(Instructions)</em>에 <code>SKILL.md</code> 내용을 붙여 넣어요. 위의 <em>SKILL.md 내용 복사</em>를 쓰면 편해요.</p></div>
+              <div><span class="pill">Claude Code</span><p>프로젝트의 <code>.claude/skills/cuenote-md/SKILL.md</code> 위치에 넣어요.</p></div>
+            </div>
+            <p class="small">다른 AI 가 만든 결과(<code>```cuenote</code> 블록 안의 내용)는 <code>.md</code> 파일로 저장해 앱의 <em>MD 불러오기</em>로 등록해요. 앱 <em>설정 → 스킬</em>에서 고친 스킬을 올리면 앱 안의 AI 도 그 규칙을 따라요.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── 사용법 ── -->
+    <section id="usage" class="section tinted">
+      <div class="wrap">
+        <div class="sec-head">
+          <p class="label">How to use</p>
+          <h2>사용 방법</h2>
+          <p class="sub">MD 파일을 불러와서, 홈에서 단계를 고르고, 원고대로 넘기면 끝이에요.</p>
+        </div>
+
+        <div class="flow">
+          <div class="flow-row">
+            <div class="phone sm"><img src="./images/shot-home.png" alt="CueNote 홈 화면: 행사 제목, 8단계, 예정 시각과 배정 시간이 적힌 일정 목록" width="390" height="844" loading="lazy"></div>
+            <div class="flow-text">
+              <span class="flow-no">01</span>
+              <h3>불러오고, 한눈에</h3>
+              <ul>
+                <li>첫 화면의 <em>MD 파일 불러오기</em>로 행사 <code>.md</code> 를 올려요. 처음이라면 <em>샘플 행사 열기</em>.</li>
+                <li><b>홈</b>에 행사 제목·날짜·장소와 전체 일정(예정 시각·배정 시간·실제 시간)이 나와요.</li>
+                <li>단계를 누르거나 하단 <em>입장</em>으로 들어가요. 숫자 키로 바로 입장할 수도 있어요.</li>
+              </ul>
+            </div>
+          </div>
+          <div class="flow-row rev">
+            <div class="phone sm"><img src="./images/shot-script.png" alt="단계 화면: 인사말 원고, 사회자 멘트, 음향 큐 박스와 남은 시간 타이머" width="390" height="844" loading="lazy"></div>
+            <div class="flow-text">
+              <span class="flow-no">02</span>
+              <h3>원고대로, 한 화면씩</h3>
+              <ul>
+                <li><em>‹ ›</em> 로 원고를 한 화면씩 넘겨요. 사회자 멘트·연출 큐·주의 박스가 구분돼서 보여요.</li>
+                <li>상단 남은 시간(<em>▶ REMAINING</em>)을 누르면 타이머가 시작·일시정지돼요.</li>
+                <li>끝에서 <em>다음(완료)</em>을 누르면 홈으로 돌아가 다음 단계가 선택돼요. 다시 <em>입장</em>!</li>
+              </ul>
+            </div>
+          </div>
+          <div class="flow-row">
+            <div class="phone sm"><img src="./images/shot-slides.png" alt="슬라이드 발표 단계: SLIDE 02/03 지난 30년의 발자취" width="390" height="844" loading="lazy"></div>
+            <div class="flow-text">
+              <span class="flow-no">03</span>
+              <h3>발표는 슬라이드 한 장씩</h3>
+              <ul>
+                <li>발표 단계에 <code>{type: slides}</code> 를 붙이고 <code>###</code> 마다 슬라이드 한 장.</li>
+                <li>페이지 터너 한 번 = 슬라이드 한 장. 진행 표시(●●○)와 다음 단계 미리보기도 함께.</li>
+                <li>슬라이드 한 장을 한 단계로 쓰는 발표라면 <code>flow: 연속</code> 으로 홈을 거치지 않고 넘어가요.</li>
+              </ul>
+            </div>
+          </div>
+          <div class="flow-row rev">
+            <div class="phone sm"><img src="./images/shot-focus.png" alt="집중 모드: 상·하단 바 없이 원고만 크게, 자동 스크롤 조절 바" width="390" height="844" loading="lazy"></div>
+            <div class="flow-text">
+              <span class="flow-no">04</span>
+              <h3>집중 모드</h3>
+              <ul>
+                <li>단계 화면의 <em>⤢</em> 버튼이나 <kbd>F</kbd> — 상·하단 바를 숨기고 원고·슬라이드만 보여요.</li>
+                <li>화면 <b>아래쪽</b>을 누르면 다음, <b>위쪽</b>은 이전.</li>
+                <li><em>자동</em>을 켜면 원고가 천천히 올라가요(속도 − +, ⏱ 배정 시간 맞춤). 화면을 만지면 멈춰요.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="usage-grid">
+          <div class="card">
+            <h3>페이지 터너 · 키보드</h3>
+            <table class="keys">
+              <thead><tr><th>키</th><th>홈</th><th>단계</th></tr></thead>
+              <tbody>
+                <tr><td><kbd>→</kbd><kbd>↓</kbd><kbd>Space</kbd><kbd>Enter</kbd></td><td>선택한 단계 입장</td><td>다음</td></tr>
+                <tr><td><kbd>←</kbd><kbd>↑</kbd><kbd>PageUp</kbd></td><td>이전 단계 선택</td><td>이전</td></tr>
+                <tr><td><kbd>Esc</kbd><kbd>H</kbd></td><td>—</td><td>홈</td></tr>
+                <tr><td><kbd>F</kbd></td><td>—</td><td>집중 모드</td></tr>
+                <tr><td><kbd>1</kbd><kbd>2</kbd>…</td><td colspan="2">해당 번호 단계로 바로 입장 (1 → 2 를 연달아 누르면 12번)</td></tr>
+                <tr><td><kbd>P</kbd></td><td colspan="2">타이머 시작·일시정지</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="card">
+            <h3>AI 로 만들기 <small>앱 상단 ✦</small></h3>
+            <p class="small"><em>설정 → AI 연결</em>에서 본인 API 키로 연결해요. OpenCode Zen · OpenRouter · BizRouter · ChatGPT · Claude · Gemini · 직접 입력(OpenAI 호환). 키는 기기에만 저장돼요.</p>
+            <div class="ai-ways">
+              <div><b>대화로 만들기</b><p>“12월 20일 18시 송년회, 2시간, 대표 인사·시상·경품 추첨” → 계획안 카드 → “공연을 30분으로” 처럼 고치기 → <em>새 행사로 등록</em></p></div>
+              <div><b>문서로 만들기</b><p>행사 계획서·식순표를 올리면 CueNote MD 로 변환 → 미리보기·수정 → <em>새 행사로 등록</em> 또는 <em>현재 행사 일부 수정</em></p></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card syntax">
+          <div class="syntax-text">
+            <h3>마크다운 문법 한눈에</h3>
+            <ul class="small">
+              <li><code>---</code> 사이 프론트매터: <code>title</code> <code>date</code> <code>venue</code> <code>start</code></li>
+              <li><code>#</code>·<code>##</code> 제목 한 줄 = 한 단계, 본문 없는 <code>#</code> = 섹션</li>
+              <li>제목 끝 <code>{time, color, who, type: slides, at, bgm, cam, mic…}</code></li>
+              <li><code>- **사회자**:</code> 멘트 · 일반 문단 = 원고 · <code>- [ ]</code> 체크리스트</li>
+              <li><code>&gt; [음향 큐]</code> 연출 큐 · <code>&gt; [주의]</code> 주의 박스 · 표 = 일정표</li>
+              <li><b>부분 수정</b>: <code>mode: partial</code> → 같은 제목은 교체, 새 제목은 추가, <code>{remove: true}</code> 삭제</li>
+            </ul>
+            <p class="small">전체 규칙은 <a data-file="skillMd">SKILL.md</a>, 예시는 <a data-file="ceremony">샘플 기념식 MD</a> 를 참고하세요.</p>
+          </div>
+<pre class="code"><code><span class="c-fm">---
+title: 창립 30주년 기념식
+date: 2026-12-05
+venue: 본사 대강당
+start: 14:00
+---</span>
+
+<span class="c-h"># 준비 사항</span>
+- [ ] 무선 마이크 배터리 교체
+
+<span class="c-h"># 본행사 시나리오</span>
+
+<span class="c-h">## 인사말</span> <span class="c-attr">{time: 10:00, color: amber, who: 대표이사}</span>
+- <b>**사회자**</b>: 대표이사님의 기념사가 있겠습니다.
+<span class="c-q">&gt; [음향 큐] 등단 시 짧은 팡파르</span>
+
+존경하는 내빈 여러분, …
+
+<span class="c-h">## 발표</span> <span class="c-attr">{time: 20:00, type: slides}</span>
+<span class="c-h">### 1. 지난 30년의 발자취</span>
+- 1996년 창립, 직원 5명으로 시작</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── 질문 ── -->
+    <section id="faq" class="section">
+      <div class="wrap narrow">
+        <div class="sec-head">
+          <p class="label">FAQ</p>
+          <h2>자주 묻는 질문</h2>
+        </div>
+        <div class="faq">
+          <details><summary>iPhone 에서도 쓸 수 있나요?</summary><p>지금은 안드로이드(7.0 이상) 앱만 제공해요.</p></details>
+          <details><summary>행사 데이터는 어디에 저장되나요?</summary><p>불러온 행사와 설정은 기기 안에 저장돼요. AI 기능을 쓸 때만 인터넷과 본인 API 키가 필요하고, 키도 기기에만 저장돼요.</p></details>
+          <details><summary>한글(HWP)·PDF 문서도 변환되나요?</summary><p>TXT·MD 문서는 앱에서 바로 변환돼요. HWP·HWPX·PDF·DOCX·XLSX·PPTX 는 PC 에서 실행하는 kordoc 문서 변환 서버를 연결해야 해요(고급 설정).</p></details>
+          <details><summary>행사 도중 일부 순서만 바뀌었어요.</summary><p>프론트매터에 <code>mode: partial</code> 을 넣고 바뀐 단계만 쓴 <b>부분 수정 MD</b>를 불러오면, 같은 제목의 단계만 교체·추가·삭제돼요. 앱의 <em>AI 로 만들기</em>에서 “현재 행사 고치기”로 말해도 돼요.</p></details>
+          <details><summary>업데이트는 어떻게 하나요?</summary><p>이 페이지에서 새 버전 APK 를 받아 같은 방법으로 설치하면 기존 앱 위에 덮어써져요. 현재 버전은 <b>v<span data-version>1.3.5</span></b> 이에요.</p></details>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap footer-in">
+      <a class="back" href="../"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5m6-6-6 6 6 6"/></svg>동키의 잡동사니로</a>
+      <span>CueNote v<span data-version>1.3.5</span> · 동키의 4번째 잡동사니</span>
+    </div>
+  </footer>
+  <div id="toast" class="toast" role="status" hidden></div>
+  <script type="module" src="./cuenote.js"></script>
+</body>
+</html>

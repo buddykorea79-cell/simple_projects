@@ -22,7 +22,7 @@
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 body {
-  margin: 0; min-width: 320px;
+  margin: 0; min-width: 320px; word-break: keep-all; overflow-wrap: anywhere;
   background:
     radial-gradient(900px 500px at 85% -10%, #efe4cc 0%, transparent 60%),
     radial-gradient(700px 400px at -10% 30%, #f1ebde 0%, transparent 60%),
@@ -33,7 +33,7 @@ a { color: inherit; }
 :focus-visible { outline: 2px solid var(--gold); outline-offset: 4px; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
-.page { max-width: 1200px; margin: 0 auto; padding: 0 40px; }
+.page { max-width: 1200px; margin: 0 auto; padding: 0 40px; overflow-x: clip; overflow-clip-margin: 40px; }  /* 은하수 점이 화면 밖으로 넘치지 않게 */
 
 /* ── 상단 ── */
 .topnav { display: flex; align-items: center; justify-content: space-between; gap: 16px; height: 84px; border-bottom: 1px solid var(--line); }
@@ -57,12 +57,11 @@ a { color: inherit; }
 .hero-cta:hover svg { transform: translateY(3px); }
 
 /* 동키 인장 */
-.seal { width: 300px; flex-shrink: 0; }
-.seal svg { width: 100%; height: auto; overflow: visible; }
-.seal-outer { fill: none; stroke: var(--gold-2); stroke-width: 1; }
-.seal-inner { fill: var(--paper); stroke: var(--ink); stroke-width: 1.2; filter: drop-shadow(0 18px 30px #15192b14); }
-.seal-text { transform-origin: 120px 120px; animation: spin 60s linear infinite; }
-.seal-text text { font-family: var(--num); font-size: 11.5px; font-weight: 500; letter-spacing: 3px; fill: var(--ink); stroke: none; }
+.seal { position: relative; width: 300px; flex-shrink: 0; }
+.seal svg { position: relative; z-index: 1; display: block; width: 100%; height: auto; overflow: visible; }
+/* 은하수: 동키 주위를 도는 금빛 점들 (home/seal-stars.js) */
+.seal-stars { position: absolute; inset: -40%; width: 180%; height: 180%; pointer-events: none; z-index: 0; }
+.seal-inner { fill: var(--paper); stroke: none; filter: drop-shadow(0 18px 30px #15192b14); }
 .d-line { fill: #cfd4de; stroke: var(--ink); stroke-width: 2.2; }
 .d-pink { fill: #f0c6b2; stroke: none; }
 .d-mane { fill: var(--ink); stroke: var(--ink); stroke-width: 1.5; }
@@ -74,7 +73,6 @@ a { color: inherit; }
 .ear-l { animation: wiggle 5s ease-in-out infinite; }
 .ear-r { animation: wiggle 5s ease-in-out infinite reverse; animation-delay: .5s; }
 .eyes { transform-box: fill-box; transform-origin: center; animation: blink 6s infinite; }
-@keyframes spin { to { transform: rotate(360deg); } }
 @keyframes wiggle { 0%, 80%, 100% { transform: rotate(0); } 88% { transform: rotate(-9deg); } 94% { transform: rotate(5deg); } }
 @keyframes blink { 0%, 96%, 100% { transform: scaleY(1); } 98% { transform: scaleY(.1); } }
 
@@ -119,6 +117,10 @@ a { color: inherit; }
 .soon-no { font-family: var(--latin); font-style: italic; font-weight: 600; font-size: 19px; }
 .soon-text { font-size: 14px; }
 .soon-plus { margin-left: auto; width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--line-2); display: grid; place-items: center; font-family: var(--num); font-size: 18px; line-height: 1; }
+.soon.r1 { grid-column: span 2; }
+.soon.r2 { grid-column: span 1; }
+.soon.r1, .soon.r2 { flex-direction: column; justify-content: center; text-align: center; gap: 10px; border-radius: 22px; min-height: 220px; }
+.soon.r1 .soon-plus, .soon.r2 .soon-plus { margin: 4px 0 0; order: -1; width: 44px; height: 44px; font-size: 22px; }
 
 .footer { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; margin-top: 72px; padding: 26px 0 36px; border-top: 1px solid var(--line); font-size: 12.5px; color: var(--muted); }
 .footer-brand { font-family: var(--serif); font-weight: 600; color: var(--ink-2); }
@@ -128,11 +130,13 @@ a { color: inherit; }
 /* ── 반응형 ── */
 @media (max-width: 1020px) {
   .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .soon.r1, .soon.r2 { grid-column: 1 / -1; min-height: 0; flex-direction: row; text-align: left; border-radius: 18px; }
+  .soon.r1 .soon-plus, .soon.r2 .soon-plus { order: 0; margin: 0 0 0 auto; width: 34px; height: 34px; font-size: 18px; }
   .seal { width: 240px; }
   .hero { gap: 32px; }
 }
 @media (max-width: 720px) {
-  .page { padding: 0 16px; }
+  .page { padding: 0 16px; overflow-clip-margin: 16px; }
   .topnav { height: 66px; }
   .nav-meta .dot, .nav-note { display: none; }
   .hero { grid-template-columns: 1fr; padding: 40px 0 56px; gap: 8px; }
