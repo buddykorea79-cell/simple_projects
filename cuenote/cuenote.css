@@ -74,7 +74,9 @@ em { font-style: normal; font-weight: 700; color: var(--purple-2); }
 .ver { text-transform: none; margin-left: 8px; padding: 3px 9px; border-radius: 20px; background: #ffffffb3; border: 1px solid var(--line); letter-spacing: .04em; color: var(--ink-2); font-size: 12px; }
 .hero h1 { margin: 0 0 24px; font-size: clamp(40px, 5.6vw, 66px); line-height: 1.12; font-weight: 900; letter-spacing: -2px; }
 .lead { margin: 0 0 34px; max-width: 540px; font-size: 17px; line-height: 1.8; color: var(--ink-2); }
-.hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+.hero-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.hero-actions .btn.ghost { padding: 0 20px; }
+.hero-actions .btn.ghost svg { color: var(--purple); }
 .hero-meta { margin: 20px 0 0; font-size: 13px; color: var(--muted); }
 .hero-meta i { font-style: normal; margin: 0 8px; color: #c9c2d8; }
 .hero-meta b { color: var(--ink-2); }
@@ -230,7 +232,8 @@ em { font-style: normal; font-weight: 700; color: var(--purple-2); }
   .hero { padding: 40px 0 56px; }
   .hero h1 { letter-spacing: -1.2px; }
   .lead { font-size: 15.5px; }
-  .hero-actions .btn { width: 100%; }
+  .hero-actions { display: grid; grid-template-columns: 1fr 1fr; }
+  .hero-actions .btn.primary { grid-column: 1 / -1; }
   .hero-phones { height: 420px; }
   .hero-phones .phone { width: 190px; border-radius: 34px; padding: 7px; }
   .hero-phones .phone img { border-radius: 27px; }
