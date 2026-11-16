@@ -207,3 +207,44 @@ describe('엑셀 양식 예시', () => {
     expect(sheet.table.rows).toHaveLength(38);   // 30명 + 중복 6 + 잘못된 행 2
   });
 });
+
+import { addBall, averageSpeed, createSim, resizeSim, stepSim, takeTopBall } from '../animations/lottoSim';
+describe('로또 볼 물리', () => {
+  const seeded = (seed = 7) => () => ((seed = (seed * 1103515245 + 12345) % 2147483648) / 2147483648);
+  const run = (mix: number, seconds = 8) => {
+    const rnd = seeded();
+    const s = createSim(200, 80, rnd);
+    s.mix = s.mixTarget = mix;
+    for (let i = 0; i < seconds * 60; i++) stepSim(s, 1 / 60, rnd);
+    return s;
+  };
+
+  it('공이 유리 통 밖으로 나가지 않는다', () => {
+    const s = run(1);
+    for (const b of s.balls) expect(Math.hypot(b.x, b.y)).toBeLessThanOrEqual(s.R - s.br + .5);
+  });
+
+  it('평소에도 쉬지 않고 통 전체를 날아다닌다', () => {
+    const s = run(0);
+    expect(averageSpeed(s)).toBeGreaterThan(s.R * .5);                 // 초당 반지름의 절반 이상
+    const upper = s.balls.filter(b => b.y < 0).length / s.balls.length;
+    expect(upper).toBeGreaterThan(.2);                                   // 바닥에 가라앉지 않음
+  });
+
+  it('추첨 중에는 더 빠르게 섞인다', () => {
+    expect(averageSpeed(run(1))).toBeGreaterThan(averageSpeed(run(0)) * 1.15);
+  });
+
+  it('맨 위의 공을 꺼내고, 공을 다시 채운다', () => {
+    const s = run(0, 1);
+    const topY = Math.min(...s.balls.map(b => b.y));
+    const n = s.balls.length;
+    expect(takeTopBall(s)?.y).toBe(topY);
+    expect(s.balls).toHaveLength(n - 1);
+    addBall(s);
+    expect(s.balls).toHaveLength(n);
+    resizeSim(s, 100);
+    expect(s.R).toBe(100);
+    for (const b of s.balls) expect(Math.hypot(b.x, b.y)).toBeLessThan(100);
+  });
+});
