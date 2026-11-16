@@ -6,7 +6,7 @@ import { Icon, type IconName } from './Icon';
 export const METHODS: { id: Method; icon: IconName; name: string; fit: string; desc: string }[] = [
   { id: 'lotto', icon: 'lotto', name: '로또 볼 추첨기', fit: '1~10명 · 대상 추첨', desc: '공이 유리 통 안에서 섞이다가 하나씩 굴러 나와요. 공에는 추첨번호(휴대폰 뒷 4자리).' },
   { id: 'cards', icon: 'cards', name: '카드 뒤집기', fit: '10~60명', desc: '카드가 날아와 섞인 뒤 한 장씩 뒤집혀 이름과 추첨번호를 공개해요.' },
-  { id: 'survival', icon: 'survival', name: '서바이벌', fit: '수십~수백 명 · 대량 추첨', desc: '참가자 전원이 화면에 깔리고 3단계에 걸쳐 탈락자가 꺼져요. 끝까지 남은 사람이 당첨!' },
+  { id: 'survival', icon: 'survival', name: '서바이벌', fit: '수십~수백 명 · 대량 추첨', desc: '참가자 전원이 번호순으로 깔리고 3단계에 걸쳐 탈락자가 꺼져요. 단계마다 살아남은 사람을 번호순으로 다시 모아 크게 보여 줘요.' },
 ];
 
 export function RoundSetup({ onStart }: { onStart(round: Round): void }) {

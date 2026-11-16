@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import type { CSSProperties } from 'react';
 import { type AnimProps, celebrate, fitGrid, useAutoStep, useLater, useSignal, useSize } from './common';
 import { shuffled } from '../lib/random';
@@ -10,8 +10,15 @@ interface Tile { id: string; name: string; last4: string; wave: number; d: numbe
 /** 서바이벌은 항상 3단계까지만 진행한다. */
 export const SURVIVAL_STAGES = 3;
 
+/** 추첨번호(휴대폰 뒷 4자리) 오름차순, 같으면 이름순 */
+export const byNumber = (a: { last4: string; name: string }, b: { last4: string; name: string }) =>
+  a.last4.localeCompare(b.last4) || a.name.localeCompare(b.name, 'ko');
+
+type Phase = 'intro' | 'ready' | 'scan' | 'cut' | 'regroup' | 'survivors' | 'board';
+
 /**
- * 서바이벌: 참가자 전원을 깔아 두고 단계마다 탈락자를 소거한다.
+ * 서바이벌: 참가자 전원을 번호순으로 깔아 두고 단계마다 탈락자를 소거한다.
+ * 한 단계가 끝나면 살아남은 사람만 다시 번호순으로 모아 타일을 키워 보여 준다.
  * 수백~수천 명이 참가하고 수백 명이 당첨되는 대량 추첨용.
  */
 export function Survival({ pool, winners, prize, speed, advance, revealAll, auto, onProgress, onDone }: AnimProps) {
@@ -38,14 +45,17 @@ export function Survival({ pool, winners, prize, speed, advance, revealAll, auto
       for (let j = 0; j < take; j++) waveOf.set(losers[idx++], k);
       aliveAfter.push(base.length - idx);
     }
-    const tiles: Tile[] = base.map(b => ({ ...b, wave: waveOf.get(b.id) ?? Infinity, d: Math.random(), d2: Math.random() }));
+    const tiles: Tile[] = base
+      .map(b => ({ ...b, wave: waveOf.get(b.id) ?? Infinity, d: Math.random(), d2: Math.random() }))
+      .sort(byNumber);
     return { tiles, waves, aliveAfter };
   }, [pool, winners]);
 
-  const [phase, setPhase] = useState<'intro' | 'ready' | 'scan' | 'cut' | 'survivors' | 'board'>('intro');
-  const [wave, setWave] = useState(0);           // 지금까지 끝난 단계
+  const [phase, setPhase] = useState<Phase>('intro');
+  const [wave, setWave] = useState(0);              // 지금까지 소거된 단계 (탈락 타일이 흐려짐)
+  const [layoutWave, setLayoutWave] = useState(0);  // 화면 배치에서 빠진 단계 (살아남은 사람만 다시 정렬)
   const [shown, setShown] = useState(tiles.length);
-  const skipRef = useRef(false);                 // "전체 공개": 남은 단계를 빠르게 연속 진행
+  const skipRef = useRef(false);                    // "전체 공개": 남은 단계를 빠르게 연속 진행
   const busy = phase !== 'ready';
 
   // 남은 인원 카운터 애니메이션
@@ -71,18 +81,51 @@ export function Survival({ pool, winners, prize, speed, advance, revealAll, auto
     const next = wave + 1;
     const ready = auto
       ? `일괄 추첨 · 곧 ${next}단계 소거가 시작돼요`
-      : wave === 0 ? `참가자 ${tiles.length.toLocaleString()}명 · Space를 눌러 1단계 소거를 시작하세요`
+      : wave === 0 ? `참가자 ${tiles.length.toLocaleString()}명 · 번호순 · Space를 눌러 1단계 소거를 시작하세요`
       : next === waves ? `최종 ${next}단계! Space를 눌러 당첨자를 확정하세요` : `${next}단계 / ${waves}단계 · Space로 소거`;
-    const hints: Record<typeof phase, string> = {
+    const hints: Record<Phase, string> = {
       intro: '참가자 입장 중…',
       ready,
       scan: next === waves ? '최종 단계 진행 중…' : `${next}단계 · 누가 살아남을까요…`,
       cut: `${wave}단계 소거`,
+      regroup: `살아남은 ${(aliveAfter[wave] ?? 0).toLocaleString()}명을 번호순으로 다시 모았어요`,
       survivors: '축하합니다!',
-      board: `당첨자 ${winners.length.toLocaleString()}명`,
+      board: `당첨자 ${winners.length.toLocaleString()}명 · 번호순`,
     };
     onProgress(phase === 'board' || phase === 'survivors' ? winners.length : 0, hints[phase]);
   }, [phase, wave, auto]);
+
+  // ── 다시 모으기: 탈락자를 배치에서 빼고, 살아남은 타일이 새 자리로 부드럽게 이동 (FLIP) ──
+  const tileEls = useRef(new Map<string, HTMLDivElement>());
+  const before = useRef<Map<string, DOMRect> | null>(null);
+
+  function regroup(next: number) {
+    const rects = new Map<string, DOMRect>();
+    tileEls.current.forEach((el, id) => rects.set(id, el.getBoundingClientRect()));
+    before.current = rects;
+    setLayoutWave(next);
+  }
+
+  useLayoutEffect(() => {
+    const prev = before.current;
+    if (!prev) return;
+    before.current = null;
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduce) return;
+    const els = [...tileEls.current.entries()];
+    const stagger = Math.min(4, 420 / Math.max(1, els.length));
+    els.forEach(([id, el], i) => {
+      const a = prev.get(id);
+      const b = el.getBoundingClientRect();
+      if (!a || !b.width) return;
+      const dx = a.left - b.left, dy = a.top - b.top, sx = a.width / b.width, sy = a.height / b.height;
+      if (Math.abs(dx) < .5 && Math.abs(dy) < .5 && Math.abs(sx - 1) < .01) return;
+      el.animate(
+        [{ transformOrigin: '0 0', transform: `translate(${dx}px, ${dy}px) scale(${sx}, ${sy})` }, { transformOrigin: '0 0', transform: 'none' }],
+        { duration: skipRef.current ? 450 : 800, delay: i * stagger, easing: 'cubic-bezier(.2,.8,.2,1)', fill: 'backwards' },
+      );
+    });
+  }, [layoutWave]);
 
   function runWave() {
     if (phase !== 'ready') return;
@@ -97,9 +140,14 @@ export function Survival({ pool, winners, prize, speed, advance, revealAll, auto
       setWave(next);
       setPhase('cut');
       later(() => {
-        if (final) finish();
-        else { setPhase('ready'); if (skipRef.current) later(() => runWaveRef.current(), 150); }
-      }, skip ? 700 : 1300);
+        regroup(next);
+        setPhase('regroup');
+        sfx.whoosh();
+        later(() => {
+          if (final) finish();
+          else { setPhase('ready'); if (skipRef.current) later(() => runWaveRef.current(), 150); }
+        }, skip ? 600 : fast ? 900 : 1300);
+      }, skip ? 650 : 1200);
     }, scanMs);
   }
   const runWaveRef = useRef(runWave);
@@ -122,10 +170,13 @@ export function Survival({ pool, winners, prize, speed, advance, revealAll, auto
     if (phase === 'ready') runWave();
   });
 
-  const textGrid = useMemo(() => fitGrid(size.w, size.h, tiles.length, 2, 8, 250), [size, tiles.length]);
+  // 화면에 남아 있는 타일 (이미 정리된 단계의 탈락자는 뺀다). 원래 번호순이라 그대로 번호순.
+  const visible = useMemo(() => tiles.filter(t => t.wave > layoutWave), [tiles, layoutWave]);
+  const n = visible.length;
+  const textGrid = useMemo(() => fitGrid(size.w, size.h, n, 2, 8, 250), [size, n]);
   const textMode = textGrid.w >= 76;
-  const gap = textMode ? 8 : tiles.length > 1500 ? 2 : 4;
-  const grid = useMemo(() => textMode ? textGrid : fitGrid(size.w, size.h, tiles.length, 1, gap, 110), [size, tiles.length, textMode, textGrid, gap]);
+  const gap = textMode ? 8 : n > 1500 ? 2 : 4;
+  const grid = useMemo(() => textMode ? textGrid : fitGrid(size.w, size.h, n, 1, gap, 110), [size, n, textMode, textGrid, gap]);
 
   return (
     <div className={`survival phase-${phase}`}>
@@ -147,18 +198,19 @@ export function Survival({ pool, winners, prize, speed, advance, revealAll, auto
       <div ref={areaRef} className={`sv-area${phase === 'scan' ? ' scanning' : ''}`}>
         <div className={`sv-grid${textMode ? ' text' : ''}`}
           style={{ gridTemplateColumns: `repeat(${grid.cols}, ${grid.w}px)`, gridAutoRows: `${grid.h}px`, gap, '--tw': `${grid.w}px`, '--th': `${grid.h}px` } as CSSProperties}>
-          {tiles.map(t => {
+          {visible.map(t => {
             const out = t.wave <= wave;
             const won = (phase === 'survivors' || phase === 'board') && t.wave === Infinity;
             return (
-              <div key={t.id} className={`sv-tile${out ? ' out' : ''}${won ? ' win' : ''}`} style={{ '--d': t.d, '--d2': t.d2 } as CSSProperties}>
+              <div key={t.id} ref={el => { if (el) tileEls.current.set(t.id, el); else tileEls.current.delete(t.id); }}
+                className={`sv-tile${out ? ' out' : ''}${won ? ' win' : ''}`} style={{ '--d': t.d, '--d2': t.d2 } as CSSProperties}>
                 {textMode ? <><b>{t.name}</b><span className="num4">{t.last4}</span></> : grid.w >= 34 ? <span className="num4">{t.last4}</span> : null}
               </div>
             );
           })}
         </div>
       </div>
-      {phase === 'board' && <WinnerBoard winners={winners} prize={prize} />}
+      {phase === 'board' && <WinnerBoard winners={winners} prize={prize} sortByNumber />}
     </div>
   );
 }

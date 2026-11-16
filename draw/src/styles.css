@@ -302,7 +302,7 @@ kbd { display: inline-block; min-width: 22px; padding: 1px 7px; border: 1px soli
 .scanning .sv-tile:not(.out) { animation: shimmer .55s infinite alternate; animation-delay: calc(var(--d2) * -1s); }
 .sv-tile.win { background: linear-gradient(180deg, #f6e4b3, #cfa654); border-color: #fff4d6; opacity: 1; transform: scale(1.05); box-shadow: 0 0 22px #d9b45f88; transition-delay: 0s; animation: none; }
 .sv-tile.win b, .sv-tile.win .num4 { color: #141a33; }
-.phase-board .sv-area { opacity: .12; transition: opacity .8s; }
+.phase-board .sv-area { opacity: .04; transition: opacity .8s; }
 @keyframes tileIn { from { opacity: 0; transform: scale(.5); } }
 @keyframes shimmer { 0% { background: #ffffff10; border-color: #ffffff1a; } 100% { background: #d9b45f40; border-color: #f3dfaa99; } }
 @keyframes pulse { to { opacity: .55; } }
@@ -316,6 +316,8 @@ kbd { display: inline-block; min-width: 22px; padding: 1px 7px; border: 1px soli
 .wb-head small { display: block; font-size: 18px; font-weight: 500; color: #c9c3b0; margin-top: 4px; font-family: var(--sans); }
 .wb-list { list-style: none; margin: 0; padding: 4px 4px 24px; width: 100%; overflow: auto; display: grid; gap: 12px; align-content: start; }
 .wb-list li { display: grid; grid-template-columns: auto 1fr auto; align-items: center; column-gap: 14px; background: linear-gradient(180deg, #1b2244f2, #121733f2); border: 1px solid #d9b45f40; border-radius: 16px; padding: 14px 18px; animation: rise .5s backwards; animation-delay: calc(var(--i) * 28ms); }
+.wb-note { margin: 6px 0 0; font-size: 13px; color: #b9b3a2; letter-spacing: .02em; }
+.wb-list.by-number li { grid-template-columns: 1fr auto; }
 .wb-no { width: 32px; height: 32px; border-radius: 50%; border: 1px solid #d9b45f80; color: var(--champagne); display: grid; place-items: center; font-family: var(--num); font-size: 13px; }
 .wb-name { font-weight: 800; color: #fbf6ea; letter-spacing: .02em; }
 .wb-num { font-weight: 500; background: var(--gold-text); -webkit-background-clip: text; background-clip: text; color: transparent; }

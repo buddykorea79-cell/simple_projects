@@ -248,3 +248,14 @@ describe('로또 볼 물리', () => {
     for (const b of s.balls) expect(Math.hypot(b.x, b.y)).toBeLessThan(100);
   });
 });
+
+import { byNumber } from '../animations/Survival';
+describe('서바이벌 번호순 정렬', () => {
+  it('추첨번호 오름차순, 같은 번호는 이름순', () => {
+    const list = [
+      { last4: '5678', name: '홍*동' }, { last4: '0042', name: '김*수' },
+      { last4: '5678', name: '가*나' }, { last4: '1000', name: '이*희' },
+    ].sort(byNumber);
+    expect(list.map(t => `${t.last4} ${t.name}`)).toEqual(['0042 김*수', '1000 이*희', '5678 가*나', '5678 홍*동']);
+  });
+});
