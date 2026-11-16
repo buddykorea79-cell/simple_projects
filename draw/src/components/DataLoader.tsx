@@ -2,15 +2,18 @@ import { useRef, useState } from 'react';
 import { useDraw } from '../store';
 import type { ColumnMapping, SourceType } from '../types';
 import { buildParticipants, detectColumns } from '../lib/normalize';
-import { fetchAppsScript, fetchPublishedCsv, parseCsvText, readCsvFile, type Table } from '../lib/sources';
+import { fetchAppsScript, fetchPublishedCsv, makeSampleXlsx, parseCsvText, pickSheet, readSpreadsheetFile, type Sheet, type Table } from '../lib/sources';
 import { makeSampleCsv } from '../lib/sample';
 import { downloadText, formatDateTime } from '../lib/exportCsv';
 import { Icon } from './Icon';
 
 // 열 매핑을 다시 고를 수 있도록 마지막으로 읽은 표를 메모리에 둔다 (저장하지 않음).
-let lastTable: { table: Table; type: SourceType; url?: string; fileName?: string } | null = null;
+// 엑셀은 시트가 여러 개일 수 있어 시트 목록도 함께 둔다.
+type Loaded = { table: Table; type: SourceType; url?: string; fileName?: string; sheets?: Sheet[]; sheetIndex?: number };
+let lastTable: Loaded | null = null;
 
-const SOURCE_LABEL: Record<SourceType, string> = { csv: 'CSV 파일', published: '게시된 시트', appsScript: 'Apps Script', sample: '샘플 데이터' };
+const SOURCE_LABEL: Record<SourceType, string> = { csv: '파일', published: '게시된 시트', appsScript: 'Apps Script', sample: '샘플 데이터' };
+const FILE_ACCEPT = '.csv,.xlsx,.xls,.xlsm,.ods,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel';
 
 export function DataLoader({ onNext, onOpenGuide }: { onNext(): void; onOpenGuide(section: string): void }) {
   const { settings, setSettings, source, participants, rounds, salt, setData, rawCount } = useDraw();
@@ -28,7 +31,7 @@ export function DataLoader({ onNext, onOpenGuide }: { onNext(): void; onOpenGuid
       setError('이름 열과 휴대폰 열을 아래에서 골라 주세요.');
       return;
     }
-    const res = buildParticipants(t.table.rows, m, { dedupe: opts.dedupe, salt });
+    const res = buildParticipants(t.table.rows, m, { dedupe: opts.dedupe, salt, firstRow: t.table.firstRow });
     if (!res.participants.length) { setError('유효한 참가자가 한 명도 없어요. 열 선택을 확인해 주세요.'); }
     setData({ type: t.type, url: t.url, fileName: t.fileName, loadedAt: new Date().toISOString(), stats: res.stats, hasRaw: true }, res.participants, res.raw);
   }
@@ -47,9 +50,23 @@ export function DataLoader({ onNext, onOpenGuide }: { onNext(): void; onOpenGuid
   }
 
   const onFile = (file?: File) => file && run(async () => {
-    if (!/\.(csv|txt)$/i.test(file.name)) throw new Error('CSV 파일(.csv)만 올릴 수 있어요. 엑셀은 [다른 이름으로 저장] → CSV로 저장해 주세요.');
-    loadTable({ table: await readCsvFile(file), type: 'csv', fileName: file.name });
+    const sheets = await readSpreadsheetFile(file);
+    const i = pickSheet(sheets);
+    loadTable(fromSheet(file.name, sheets, i));
   });
+
+  function fromSheet(fileName: string, sheets: Sheet[], i: number): Loaded {
+    const many = sheets.length > 1;
+    return { table: sheets[i].table, type: 'csv', fileName: many ? `${fileName} · ${sheets[i].name}` : fileName, sheets, sheetIndex: i };
+  }
+
+  function changeSheet(i: number) {
+    if (!lastTable?.sheets) return;
+    const base = lastTable.fileName?.split(' · ')[0] ?? '';
+    loadTable(fromSheet(base, lastTable.sheets, i));
+  }
+
+  const onSampleXlsx = () => run(async () => downloadText('모두의추첨_샘플.xlsx', await makeSampleXlsx(makeSampleCsv(30))));
 
   const onPublished = () => run(async () => loadTable({ table: await fetchPublishedCsv(pubUrl), type: 'published', url: pubUrl.trim() }));
 
@@ -93,7 +110,7 @@ export function DataLoader({ onNext, onOpenGuide }: { onNext(): void; onOpenGuid
         </div>
 
         <div className="segmented" role="tablist" aria-label="데이터 불러오는 방법">
-          {([['csv', 'CSV 파일', 'upload'], ['published', '게시된 구글 시트', 'link'], ['appsScript', 'Apps Script (권장)', 'code']] as const).map(([id, label, icon]) => (
+          {([['csv', 'CSV · 엑셀 파일', 'upload'], ['published', '게시된 구글 시트', 'link'], ['appsScript', 'Apps Script (권장)', 'code']] as const).map(([id, label, icon]) => (
             <button key={id} role="tab" aria-selected={tab === id} className={tab === id ? 'on' : ''} onClick={() => { setTab(id); setError(''); }}>
               <Icon name={icon} size={17} />{label}
             </button>
@@ -111,11 +128,15 @@ export function DataLoader({ onNext, onOpenGuide }: { onNext(): void; onOpenGuid
               disabled={busy}
             >
               <Icon name="upload" size={30} />
-              <strong>CSV 파일을 끌어다 놓거나 눌러서 고르세요</strong>
-              <span>첫 줄은 제목 줄이어야 해요. 예) 이름, 휴대폰 번호</span>
+              <strong>CSV·엑셀 파일을 끌어다 놓거나 눌러서 고르세요</strong>
+              <span>.csv · .xlsx · .xls 지원 · 이름, 휴대폰 번호 열이 있는 제목 줄이 필요해요</span>
             </button>
-            <input ref={fileRef} type="file" accept=".csv,text/csv" hidden onChange={e => { onFile(e.target.files?.[0]); e.target.value = ''; }} />
-            <button className="link-btn" onClick={() => downloadText('모두의추첨_샘플.csv', '﻿' + makeSampleCsv(30))}><Icon name="download" size={15} />양식 예시 CSV 내려받기</button>
+            <input ref={fileRef} type="file" accept={FILE_ACCEPT} hidden onChange={e => { onFile(e.target.files?.[0]); e.target.value = ''; }} />
+            <div className="sample-links">
+              <span>양식 예시 내려받기</span>
+              <button className="link-btn" onClick={() => downloadText('모두의추첨_샘플.csv', '\uFEFF' + makeSampleCsv(30))}><Icon name="download" size={15} />CSV</button>
+              <button className="link-btn" onClick={onSampleXlsx} disabled={busy}><Icon name="download" size={15} />엑셀</button>
+            </div>
           </div>
         )}
 
@@ -159,6 +180,14 @@ export function DataLoader({ onNext, onOpenGuide }: { onNext(): void; onOpenGuid
 
         {lastTable && mapping && (
           <div className="mapping">
+            {lastTable.sheets && lastTable.sheets.length > 1 && (
+              <label className="select-wrap sheet-pick">
+                <span>시트 <small>(내용이 있는 시트 {lastTable.sheets.length}개)</small></span>
+                <select value={lastTable.sheetIndex ?? 0} onChange={e => changeSheet(Number(e.target.value))}>
+                  {lastTable.sheets.map((sh, i) => <option key={i} value={i}>{sh.name} · {sh.table.rows.length.toLocaleString()}행</option>)}
+                </select>
+              </label>
+            )}
             <span className="field-label">열 연결 <small>(자동으로 찾았어요. 다르면 바꿔 주세요)</small></span>
             <div className="mapping-row">
               {([['name', '이름 열'], ['phone', '휴대폰 열'], ['time', '응답 시각 열 (선택)']] as const).map(([k, label]) => (
@@ -194,7 +223,7 @@ export function DataLoader({ onNext, onOpenGuide }: { onNext(): void; onOpenGuid
             <div className="hl"><span>추첨 대상</span><b>{source.stats.valid.toLocaleString()}</b></div>
           </div>
           {rounds.length > 0 && <p className="hint">이미 진행한 {rounds.length}개 차수의 당첨 기록은 그대로 유지돼요. 같은 휴대폰 번호면 같은 사람으로 인식해요.</p>}
-          {source.type !== 'appsScript' && rawCount === 0 && <p className="hint">새로고침해서 원본 정보는 지워졌어요(저장하지 않아요). 원본 이름·번호가 들어간 CSV가 필요하면 명단을 다시 불러오세요.</p>}
+          {source.type !== 'appsScript' && rawCount === 0 && <p className="hint">새로고침해서 원본 정보는 지워졌어요(저장하지 않아요). 원본 이름·번호가 들어간 CSV가 필요하면 명단 파일을 다시 불러오세요.</p>}
           <div className="table-wrap">
             <table className="table">
               <thead><tr><th>추첨번호</th><th>이름</th><th>응모순서</th><th>원본 행</th><th>응답 시각</th></tr></thead>

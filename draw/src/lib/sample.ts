@@ -17,7 +17,7 @@ export function makeSampleCsv(count = 320): string {
     rows.push(`"${t}",${name},${phone},${pick(teams)}`);
   }
   // 중복 응모 몇 건과 잘못된 번호 몇 건 (불러오기 요약을 확인해 보라는 뜻)
-  for (let i = 0; i < 6; i++) rows.push(`"${new Date(start + (count + i) * 47_000).toLocaleString('ko-KR')}",${pick(SURNAMES)}${pick(SYL)}${pick(SYL)},${used[i * 7].replace(/-/g, '')},${pick(teams)}`);
+  for (let i = 0; i < 6; i++) rows.push(`"${new Date(start + (count + i) * 47_000).toLocaleString('ko-KR')}",${pick(SURNAMES)}${pick(SYL)}${pick(SYL)},${used[(i * 7) % used.length].replace(/-/g, '')},${pick(teams)}`);
   rows.push(`"${new Date().toLocaleString('ko-KR')}",테스트,1234,기획팀`);
   rows.push(`"${new Date().toLocaleString('ko-KR')}",,010-0000-0000,개발팀`);
   return rows.join('\n');

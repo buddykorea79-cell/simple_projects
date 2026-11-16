@@ -4,7 +4,7 @@
 
 | No. | 이름 | 폴더 | 설명 |
 |---|---|---|---|
-| 01 | 모두의 추첨 | [`draw/`](draw/) | 구글 폼·CSV 명단으로 경품 추첨 (로또 볼 / 카드 / 서바이벌, 수동·일괄), 당첨자 CSV 다운로드 |
+| 01 | 모두의 추첨 | [`draw/`](draw/) | 구글 폼·CSV·엑셀 명단으로 경품 추첨 (로또 볼 / 카드 / 서바이벌, 수동·일괄), 당첨자 CSV 다운로드 |
 | 02 | 지금, 타이머 | [`timer/`](timer/) | 큰 글씨 카운트다운 타이머 |
 | 03 | EduTalk | 외부 링크 (새 창) | [buddybuddy-sle9.onrender.com](https://buddybuddy-sle9.onrender.com/) — 실시간 교육 소통 플랫폼 |
 | 04 | CueNote | [`cuenote/`](cuenote/) | 마크다운 큐시트 앱 소개·다운로드(APK, AI 스킬, 샘플 MD)·설치·사용 방법 |

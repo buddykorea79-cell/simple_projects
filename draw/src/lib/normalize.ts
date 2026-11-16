@@ -49,7 +49,7 @@ export interface BuildResult {
 export function buildParticipants(
   rows: string[][],
   mapping: ColumnMapping,
-  opts: { dedupe: DedupeMode; salt: string },
+  opts: { dedupe: DedupeMode; salt: string; firstRow?: number },
 ): BuildResult {
   const byPhone = new Map<string, { name: string; phone: string; rowNo: number; time?: string }>();
   let invalid = 0, duplicates = 0;
@@ -57,7 +57,7 @@ export function buildParticipants(
     const name = String(r[mapping.name] ?? '').trim();
     const phone = normalizePhone(String(r[mapping.phone] ?? ''));
     if (!name || !phone) { invalid++; return; }
-    const entry = { name, phone, rowNo: i + 2, time: mapping.time >= 0 ? String(r[mapping.time] ?? '').trim() || undefined : undefined };
+    const entry = { name, phone, rowNo: i + (opts.firstRow ?? 2), time: mapping.time >= 0 ? String(r[mapping.time] ?? '').trim() || undefined : undefined };
     if (byPhone.has(phone)) {
       duplicates++;
       if (opts.dedupe === 'last') { byPhone.delete(phone); byPhone.set(phone, entry); }

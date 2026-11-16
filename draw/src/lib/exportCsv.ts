@@ -45,8 +45,8 @@ export function csvFileName(now = new Date()): string {
   return `당첨자_${now.getFullYear()}${p(now.getMonth() + 1)}${p(now.getDate())}_${p(now.getHours())}${p(now.getMinutes())}.csv`;
 }
 
-export function downloadText(filename: string, text: string, type = 'text/csv;charset=utf-8') {
-  const url = URL.createObjectURL(new Blob([text], { type }));
+export function downloadText(filename: string, text: string | Blob, type = 'text/csv;charset=utf-8') {
+  const url = URL.createObjectURL(typeof text === 'string' ? new Blob([text], { type }) : text);
   const a = document.createElement('a');
   a.href = url;
   a.download = filename;

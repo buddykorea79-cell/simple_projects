@@ -136,3 +136,74 @@ describe('fitGrid', () => {
     expect(fitGrid(1200, 600, 5, .74, 16, 250).w).toBe(227);
   });
 });
+
+import * as XLSX from 'xlsx';
+import { parseCsvText as parseCsv, parseExcelBuffer, pickSheet } from './sources';
+
+function workbook(sheets: Record<string, unknown[][]>, bookType: XLSX.BookType = 'xlsx'): ArrayBuffer {
+  const wb = XLSX.utils.book_new();
+  for (const [name, rows] of Object.entries(sheets)) XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(rows, { cellDates: true }), name);
+  const out = XLSX.write(wb, { type: 'array', bookType }) as ArrayBuffer;
+  return out;
+}
+
+describe('엑셀 읽기', () => {
+  it('xlsx: 숫자로 저장된 번호·날짜 셀도 읽는다', async () => {
+    const buf = workbook({ 응답: [
+      ['타임스탬프', '성명', '연락처'],
+      [new Date(2026, 10, 14, 9, 30), '홍길동', '010-1111-2222'],
+      [new Date(2026, 10, 14, 9, 31), '김철수', 1033334444],   // 앞자리 0이 사라진 숫자
+    ] });
+    const [sheet] = await parseExcelBuffer(buf);
+    expect(sheet.name).toBe('응답');
+    expect(sheet.table.headers).toEqual(['타임스탬프', '성명', '연락처']);
+    expect(sheet.table.firstRow).toBe(2);
+    expect(sheet.table.rows[0][0]).toMatch(/^2026-11-14 09:30/);
+    const r = buildParticipants(sheet.table.rows, detectColumns(sheet.table.headers), { dedupe: 'first', salt: 's', firstRow: sheet.table.firstRow });
+    expect(r.participants.map(p => [p.nameMasked, p.last4, p.rowNo])).toEqual([['홍*동', '2222', 2], ['김*수', '4444', 3]]);
+    expect(r.raw.get(r.participants[1].id)?.phone).toBe('01033334444');
+  });
+
+  it('맨 위 제목 줄을 건너뛰고 실제 행 번호를 지킨다', async () => {
+    const buf = workbook({ 명단: [['2026 송년회 경품 응모자'], [], ['번호', '이름', '휴대폰'], [1, '이영희', '010-5555-6666'], [], []] });
+    const [sheet] = await parseExcelBuffer(buf);
+    expect(sheet.table.headers).toEqual(['번호', '이름', '휴대폰']);
+    expect(sheet.table.firstRow).toBe(4);
+    expect(sheet.table.rows).toHaveLength(1);   // 끝의 빈 줄은 버림
+    const r = buildParticipants(sheet.table.rows, detectColumns(sheet.table.headers), { dedupe: 'first', salt: 's', firstRow: sheet.table.firstRow });
+    expect(r.participants[0].rowNo).toBe(4);
+  });
+
+  it('시트가 여러 개면 이름·휴대폰 열이 있는 시트를 고른다', async () => {
+    const sheets = await parseExcelBuffer(workbook({ 안내: [['이 파일은 응모자 명단입니다'], ['담당: 총무팀']], 응답: [['이름', '전화번호'], ['박민수', '01077778888']], 빈시트: [] }));
+    expect(sheets.map(s => s.name)).toEqual(['안내', '응답']);   // 빈 시트는 뺌
+    expect(pickSheet(sheets)).toBe(1);
+  });
+
+  it('예전 형식 .xls 도 읽는다', async () => {
+    const [sheet] = await parseExcelBuffer(workbook({ Sheet1: [['이름', '휴대폰'], ['최지우', '010-1234-5678']] }, 'biff8'));
+    expect(sheet.table.rows[0]).toEqual(['최지우', '010-1234-5678']);
+  });
+
+  it('엑셀이 아닌 파일은 알아듣기 쉬운 오류', async () => {
+    await expect(parseExcelBuffer(new Uint8Array([0x50, 0x4b, 3, 4, 1, 2, 3]).buffer)).rejects.toThrow(/엑셀 파일을 읽지 못했어요/);
+  });
+
+  it('CSV 도 제목 줄 위의 안내 줄을 건너뛴다', () => {
+    const t = parseCsv('행사 응모 명단,,\n이름,휴대폰,소속\n홍길동,010-1111-2222,개발팀\n');
+    expect(t.headers).toEqual(['이름', '휴대폰', '소속']);
+    expect(t.firstRow).toBe(3);
+  });
+});
+
+import { makeSampleXlsx } from './sources';
+import { makeSampleCsv } from './sample';
+describe('엑셀 양식 예시', () => {
+  it('내려받은 예시 엑셀을 다시 올리면 그대로 읽힌다', async () => {
+    const blob = await makeSampleXlsx(makeSampleCsv(30));
+    const [sheet] = await parseExcelBuffer(await blob.arrayBuffer());
+    expect(sheet.name).toBe('응모자');
+    expect(sheet.table.headers).toEqual(['타임스탬프', '이름', '휴대폰 번호', '소속']);
+    expect(sheet.table.rows).toHaveLength(38);   // 30명 + 중복 6 + 잘못된 행 2
+  });
+});

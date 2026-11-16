@@ -1,14 +1,100 @@
 import Papa from 'papaparse';
 import type { Participant } from '../types';
 import { phoneLast4 } from './mask';
+import { detectColumns } from './normalize';
 
-export interface Table { headers: string[]; rows: string[][]; }
+/** firstRow: 첫 데이터 행이 원본 파일에서 몇 번째 줄인지 (당첨자 대조용 "원본 행") */
+export interface Table { headers: string[]; rows: string[][]; firstRow: number; }
+export interface Sheet { name: string; table: Table; }
+
+const isBlankRow = (r: unknown[]) => r.every(c => String(c ?? '').trim() === '');
+
+/**
+ * 2차원 배열을 표로 바꾼다. 맨 위에 "경품 응모자 명단" 같은 제목 줄이 있어도
+ * 처음 10줄 안에서 이름·휴대폰 열이 함께 있는 줄을 제목 줄로 고른다.
+ */
+export function toTable(raw: unknown[][]): Table | null {
+  const rows = raw.map(r => r.map(c => String(c ?? '').trim()));
+  const firstFilled = rows.findIndex(r => !isBlankRow(r));
+  if (firstFilled < 0) return null;
+  let h = firstFilled;
+  for (let i = firstFilled; i < Math.min(rows.length, firstFilled + 10); i++) {
+    const m = detectColumns(rows[i]);
+    if (m.name >= 0 && m.phone >= 0) { h = i; break; }
+  }
+  const data = rows.slice(h + 1);
+  while (data.length && isBlankRow(data[data.length - 1])) data.pop();
+  return { headers: rows[h], rows: data, firstRow: h + 2 };
+}
 
 export function parseCsvText(text: string): Table {
-  const res = Papa.parse<string[]>(text.replace(/^﻿/, ''), { skipEmptyLines: 'greedy' });
-  const [headers = [], ...rows] = res.data;
-  if (!headers.length) throw new Error('CSV에 내용이 없어요.');
-  return { headers: headers.map(h => String(h).trim()), rows };
+  const res = Papa.parse<string[]>(text.replace(/^\uFEFF/, ''), { skipEmptyLines: false });
+  const table = toTable(res.data);
+  if (!table) throw new Error('CSV에 내용이 없어요.');
+  return table;
+}
+
+/** 엑셀(xlsx·xls·ods) 파일 확장자인가 */
+export const isExcelName = (name: string) => /\.(xlsx|xlsm|xls|ods)$/i.test(name);
+
+/** 엑셀 셀 값 → 글자. 날짜는 2026-11-14 09:30, 숫자는 지수 표기 없이 (앞자리 0이 사라진 휴대폰 번호 대비) */
+function cellText(v: unknown): string {
+  if (v instanceof Date) {
+    if (Number.isNaN(v.getTime())) return '';
+    const p = (n: number) => String(n).padStart(2, '0');
+    const date = `${v.getFullYear()}-${p(v.getMonth() + 1)}-${p(v.getDate())}`;
+    const hasTime = v.getHours() || v.getMinutes() || v.getSeconds();
+    return hasTime ? `${date} ${p(v.getHours())}:${p(v.getMinutes())}${v.getSeconds() ? ':' + p(v.getSeconds()) : ''}` : date;
+  }
+  if (typeof v === 'number') return Number.isInteger(v) ? v.toLocaleString('en-US', { useGrouping: false, maximumFractionDigits: 0 }) : String(v);
+  return String(v ?? '');
+}
+
+/** 엑셀 파일 내용을 시트별 표로 읽는다. */
+export async function parseExcelBuffer(buf: ArrayBuffer): Promise<Sheet[]> {
+  const XLSX = await import('xlsx');   // 엑셀을 올릴 때만 불러온다
+  let wb: import('xlsx').WorkBook;
+  try { wb = XLSX.read(new Uint8Array(buf), { type: 'array', cellDates: true, dense: true }); }
+  catch (e) {
+    const msg = String(e instanceof Error ? e.message : e);
+    if (/password|encrypt/i.test(msg)) throw new Error('암호가 걸린 엑셀 파일은 읽을 수 없어요. 엑셀에서 암호를 해제한 뒤 다시 올려 주세요.');
+    throw new Error('엑셀 파일을 읽지 못했어요. 파일이 손상되지 않았는지 확인하거나 CSV로 저장해 올려 주세요.');
+  }
+  const sheets: Sheet[] = [];
+  for (const name of wb.SheetNames) {
+    const ws = wb.Sheets[name];
+    if (!ws) continue;
+    const aoa = XLSX.utils.sheet_to_json<unknown[]>(ws, { header: 1, raw: true, defval: '', blankrows: true });
+    const table = toTable(aoa.map(r => r.map(cellText)));
+    if (table && table.rows.length) sheets.push({ name, table });
+  }
+  if (!sheets.length) throw new Error('엑셀 파일에 내용이 있는 시트가 없어요.');
+  return sheets;
+}
+
+/** 이름·휴대폰 열을 둘 다 찾은 시트를 먼저 고른다. */
+export function pickSheet(sheets: Sheet[]): number {
+  const i = sheets.findIndex(s => { const m = detectColumns(s.table.headers); return m.name >= 0 && m.phone >= 0; });
+  return i >= 0 ? i : 0;
+}
+
+/** CSV 또는 엑셀 파일을 읽어 시트 목록으로 돌려준다 (CSV는 시트 하나). */
+export async function readSpreadsheetFile(file: File): Promise<Sheet[]> {
+  if (isExcelName(file.name)) return parseExcelBuffer(await file.arrayBuffer());
+  if (/\.(csv|txt)$/i.test(file.name)) return [{ name: file.name, table: await readCsvFile(file) }];
+  throw new Error('CSV(.csv)나 엑셀(.xlsx, .xls) 파일을 올려 주세요.');
+}
+
+/** 샘플 CSV 와 같은 내용의 엑셀 파일 (양식 예시 내려받기용) */
+export async function makeSampleXlsx(csvText: string): Promise<Blob> {
+  const XLSX = await import('xlsx');
+  const rows = Papa.parse<string[]>(csvText, { skipEmptyLines: true }).data;
+  const ws = XLSX.utils.aoa_to_sheet(rows);
+  ws['!cols'] = [{ wch: 22 }, { wch: 10 }, { wch: 16 }, { wch: 12 }];
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, '응모자');
+  const out = XLSX.write(wb, { type: 'array', bookType: 'xlsx' });
+  return new Blob([out], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
 }
 
 /** UTF-8로 읽어 보고 글자가 깨지면 엑셀 기본 저장 형식(CP949/EUC-KR)으로 다시 읽는다. */

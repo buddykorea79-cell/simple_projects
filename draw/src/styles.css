@@ -118,6 +118,8 @@ kbd { display: inline-block; min-width: 22px; padding: 1px 7px; border: 1px soli
 .mapping-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
 .select-wrap { display: flex; flex-direction: column; gap: 5px; font-size: 12px; color: var(--muted); }
 .select-wrap select { height: 44px; border: 1px solid var(--line); border-radius: 10px; padding: 0 10px; background: #fff; font-size: 14px; color: var(--ink); }
+.sheet-pick { max-width: 360px; margin: 12px 0 16px; }
+.sample-links { display: flex; align-items: center; gap: 14px; font-size: 13px; color: var(--muted); }
 
 .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; }
 .stats div { padding: 16px 20px; display: flex; flex-direction: column; gap: 4px; border-right: 1px solid var(--line); background: #fffdf8; }
