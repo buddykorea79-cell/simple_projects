@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="78 52 84 128" fill="none" stroke="#15192b" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+  <title>Donkey</title>
+  <!-- Original character from simple_projects/index.html; original geometry and colors preserved. -->
+  <style>
+    .d-line{fill:#cfd4de;stroke:#15192b;stroke-width:2.2}
+    .d-pink{fill:#f0c6b2;stroke:none}
+    .d-mane{fill:#15192b;stroke:#15192b;stroke-width:1.5}
+    .d-muzzle{fill:#f6efe1;stroke:#15192b;stroke-width:2}
+    .d-ink,.eyes circle{fill:#15192b;stroke:none}
+    .d-mouth{stroke:#15192b;stroke-width:2.2}
+    .d-blush{fill:#f0c6b2;stroke:none;opacity:.75}
+  </style>
+  <g class="donkey">
+    <g class="ear ear-l"><ellipse cx="101" cy="86" rx="10" ry="27" transform="rotate(-18 101 86)" class="d-line"/><ellipse cx="101" cy="88" rx="4.5" ry="17" transform="rotate(-18 101 88)" class="d-pink"/></g>
+    <g class="ear ear-r"><ellipse cx="139" cy="86" rx="10" ry="27" transform="rotate(18 139 86)" class="d-line"/><ellipse cx="139" cy="88" rx="4.5" ry="17" transform="rotate(18 139 88)" class="d-pink"/></g>
+    <ellipse cx="120" cy="134" rx="35" ry="38" class="d-line"/>
+    <path d="M108 100q6-12 12-3q6-12 12 3" class="d-mane"/>
+    <ellipse cx="120" cy="155" rx="24" ry="17" class="d-muzzle"/>
+    <g class="eyes"><circle cx="106" cy="127" r="3.8"/><circle cx="134" cy="127" r="3.8"/></g>
+    <ellipse cx="112" cy="154" rx="2.6" ry="2" class="d-ink"/><ellipse cx="128" cy="154" rx="2.6" ry="2" class="d-ink"/>
+    <path d="M114 163q6 5 12 0" class="d-mouth"/>
+    <circle cx="95" cy="143" r="5" class="d-blush"/><circle cx="145" cy="143" r="5" class="d-blush"/>
+  </g>
+</svg>

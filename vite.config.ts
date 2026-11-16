@@ -33,6 +33,7 @@ export default defineConfig({
         draw: resolve(root, 'draw/index.html'),
         timer: resolve(root, 'timer/index.html'),
         cuenote: resolve(root, 'cuenote/index.html'),
+        studio: resolve(root, 'studio-mini/index.html'),
       },
     },
   },

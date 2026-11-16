@@ -40,6 +40,15 @@ const projects = [
     icon: '<path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5"/><path d="M10 12.5v5l4.5-2.5z"/>',
     steps: ['APK 내려받아 설치', '행사 MD 불러오기', '단계별 원고·타이머로 진행'],
   },
+  {
+    href: './studio-mini/',
+    name: 'Donkey-Studio Mini',
+    desc: '드론·액션캠 원본에서 AI가 좋은 장면을 골라 주고, 다듬고 보정해 MP4로 저장하는 내 PC 전용 영상 앱.',
+    tags: ['Windows 앱', '영상 편집', '로컬 AI'],
+    accent: '#ff9a5c',
+    icon: '<rect x="2" y="6" width="14" height="12" rx="2"/><path d="m16 10 6-3.5v11L16 14"/><path d="m8 9.5.9 2.1 2.1.9-2.1.9L8 15.5l-.9-2.1-2.1-.9 2.1-.9z"/>',
+    steps: ['ZIP 내려받아 압축 풀기', '영상 넣고 AI 추천 받기', '다듬고 보정해 MP4 저장'],
+  },
 ];
 
 const arrow = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-5-5 5 5-5 5"/></svg>';

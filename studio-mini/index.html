@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0b1020">
+  <meta name="description" content="Donkey-Studio Mini — 드론·액션캠 원본에서 AI가 좋은 장면을 골라 다듬고, 화질을 보정해 MP4로 저장하는 내 PC 전용 영상 앱. 다운로드·설치·사용 방법.">
+  <title>Donkey-Studio Mini · 동키의 잡동사니</title>
+  <link rel="icon" type="image/svg+xml" href="./images/donkey.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Noto+Sans+KR:wght@400;500;700;800;900&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./studio.css">
+</head>
+<body>
+  <svg class="defs" aria-hidden="true"><defs>
+    <symbol id="i-down" viewBox="0 0 24 24"><path d="M12 3v12m-5-5 5 5 5-5M5 21h14"/></symbol>
+    <symbol id="i-setup" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4M9 10.5l2 2 4-4"/></symbol>
+    <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v16H6.5A2.5 2.5 0 0 0 4 21.5zM4 21.5V5.5M8 7h8M8 11h6"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><path d="M9 9h11v11H9zM5 15H4V4h11v1"/></symbol>
+    <symbol id="i-out" viewBox="0 0 24 24"><path d="M7 17 17 7M8 7h9v9"/></symbol>
+    <symbol id="i-back" viewBox="0 0 24 24"><path d="M19 12H5m6-6-6 6 6 6"/></symbol>
+    <symbol id="i-git" viewBox="0 0 24 24"><circle cx="6" cy="6" r="2.5"/><circle cx="6" cy="18" r="2.5"/><circle cx="18" cy="8" r="2.5"/><path d="M6 8.5v7M18 10.5c0 4-6 3-10.5 6"/></symbol>
+    <symbol id="i-spark" viewBox="0 0 24 24"><path d="m12 3 2.7 6.3L21 12l-6.3 2.7L12 21l-2.7-6.3L3 12l6.3-2.7Z"/></symbol>
+  </defs></svg>
+
+  <header class="topbar">
+    <div class="wrap topbar-in">
+      <a class="back" href="../" title="동키의 잡동사니로 돌아가기"><svg><use href="#i-back"/></svg><span>동키의 잡동사니</span></a>
+      <a class="brand" href="#top"><span class="brand-mark"><img src="./images/donkey.svg" alt="" width="20" height="30"></span>Donkey-Studio <em>mini</em></a>
+      <nav class="nav" aria-label="페이지 안내">
+        <a href="#intro">소개</a><a href="#download">다운로드</a><a href="#install">설치</a><a href="#usage">사용법</a><a href="#faq">질문</a>
+      </nav>
+      <a class="btn sm primary nav-cta" href="#download">내려받기</a>
+    </div>
+  </header>
+
+  <main id="top">
+    <!-- ── 히어로 ── -->
+    <section class="hero">
+      <div class="sky" aria-hidden="true">
+        <div class="sun"></div>
+        <svg class="ridges" viewBox="0 0 1600 360" preserveAspectRatio="none">
+          <path class="r1" d="M0 170 C160 120 300 150 430 130 S700 80 860 120 1120 170 1260 120 1480 90 1600 120 V360 H0Z"/>
+          <path class="r2" d="M0 230 C140 190 260 220 400 190 S640 150 780 200 1040 230 1200 190 1460 170 1600 200 V360 H0Z"/>
+          <path class="r3" d="M0 290 C180 250 320 290 480 260 S760 230 900 270 1180 300 1340 260 1520 250 1600 270 V360 H0Z"/>
+        </svg>
+      </div>
+      <div class="wrap hero-in">
+        <div class="hero-text">
+          <p class="label"><span class="rec" aria-hidden="true"></span>Donkey-Studio Mini <span class="ver">v<b data-version>0.1.0</b></span></p>
+          <h1>긴 영상에서,<br><span class="sun-text">기억할 장면으로.</span></h1>
+          <p class="lead">드론·액션캠으로 찍은 긴 원본에서 <b>AI가 쓸 만한 장면을 골라 주면</b>, 구간을 다듬고 화질을 보정해 MP4로 저장해요. 영상은 인터넷으로 나가지 않고 <b>내 PC 안에서만</b> 처리돼요.</p>
+          <div class="hero-actions">
+            <a class="btn primary big" data-zip><svg><use href="#i-down"/></svg>ZIP 내려받기</a>
+            <a class="btn ghost big" href="#install"><svg><use href="#i-setup"/></svg>설치 방법</a>
+            <a class="btn ghost big" href="#usage"><svg><use href="#i-book"/></svg>사용 방법</a>
+          </div>
+          <p class="hero-meta">Windows 10·11<i>·</i>Node.js 22+ · FFmpeg<i>·</i>AI 추천은 Ollama(선택)<i>·</i>무료 · MIT</p>
+        </div>
+        <figure class="hero-shot">
+          <div class="window">
+            <div class="window-bar"><span></span><span></span><span></span><b>127.0.0.1:4310</b></div>
+            <img src="./images/shot-hero.webp" alt="Donkey-Studio Mini 작업 화면: 왼쪽 원본 영상 3개, 가운데 노을 능선 영상과 현재 클립 구간 막대, 오른쪽 추천 설정" width="1440" height="900">
+          </div>
+          <span class="float-chip c1"><svg><use href="#i-spark"/></svg>AI 장면 추천</span>
+          <span class="float-chip c2"><i class="dot-live"></i>Ollama 연결됨 · 내 PC</span>
+        </figure>
+      </div>
+    </section>
+
+    <!-- ── 소개 ── -->
+    <section id="intro" class="section">
+      <div class="wrap">
+        <div class="sec-head">
+          <p class="label">Introduction</p>
+          <h2>좋은 장면만, 가볍게.</h2>
+          <p class="sub">한 시간짜리 비행 영상을 처음부터 끝까지 돌려 볼 필요 없어요. 원하는 길이만 정하면 AI가 장면을 추천하고, 나는 고르고 다듬기만 하면 돼요.</p>
+        </div>
+        <ol class="pipeline" aria-label="작업 흐름">
+          <li><span>01</span><b>추천 클립</b><small>AI가 장면을 고르고 내가 다듬기</small></li>
+          <li><span>02</span><b>화질 보정</b><small>노이즈·선명도·색감·흔들림</small></li>
+          <li><span>03</span><b>내보내기</b><small>개별 MP4 · 합본 MP4</small></li>
+        </ol>
+        <div class="features">
+          <article><span class="f-icon"><svg viewBox="0 0 24 24"><path d="m12 3 2.7 6.3L21 12l-6.3 2.7L12 21l-2.7-6.3L3 12l6.3-2.7Z"/></svg></span><h3>AI 장면 추천</h3><p>원본을 구간별로 살펴 선명도·밝기·움직임 점수를 매기고, 내 PC의 Ollama 비전 모델이 장면을 보고 판단해요.</p></article>
+          <article><span class="f-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9 2h6"/></svg></span><h3>원하는 길이로</h3><p>완성할 총길이(예: 30초)와 클립 길이(2~20초)를 정하면 그 길이에 맞춰 추천 클립을 채워요.</p></article>
+          <article><span class="f-icon"><svg viewBox="0 0 24 24"><path d="M6 4v16M18 4v16M6 9h12M6 15h12"/></svg></span><h3>손으로 다듬기</h3><p>추천 클립을 재생하며 시작·끝을 조정하고, 선택 해제·직접 추가·순서 변경까지 자유롭게.</p></article>
+          <article><span class="f-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></span><h3>화질 보정</h3><p>노이즈 감소·선명도·밝기·채도·가벼운 흔들림 보정. 4초 미리보기는 실제 FFmpeg로 처리한 결과예요.</p></article>
+          <article><span class="f-icon"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M7 5v14M17 5v14M2 9.5h5M2 14.5h5M17 9.5h5M17 14.5h5"/></svg></span><h3>개별 · 합본 저장</h3><p>클립마다 MP4로, 이어 붙인 합본으로, 또는 둘 다. 1080p·4K·원본 크기와 24·30·60fps 중에서 골라요.</p></article>
+          <article><span class="f-icon"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span><h3>내 PC에서만</h3><p>이 PC(127.0.0.1)에서만 열리고 계정·클라우드 업로드가 없어요. 원본 파일은 고치지 않고 그대로 둬요.</p></article>
+        </div>
+        <figure class="themes">
+          <div class="theme-row">
+            <div class="theme-shot"><img src="./images/theme-midnight.webp" alt="Midnight 테마의 작업 화면" width="1440" height="900" loading="lazy"><span><i class="sw sw-mid"></i>Midnight</span></div>
+            <div class="theme-shot"><img src="./images/theme-white.webp" alt="White 테마의 작업 화면" width="1440" height="900" loading="lazy"><span><i class="sw sw-white"></i>White</span></div>
+            <div class="theme-shot"><img src="./images/theme-bordeaux.webp" alt="Bordeaux 테마의 작업 화면" width="1440" height="900" loading="lazy"><span><i class="sw sw-bor"></i>Bordeaux</span></div>
+          </div>
+          <figcaption>Midnight · White · Bordeaux 세 가지 테마. 고른 테마는 브라우저에 기억돼요.</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- ── 다운로드 ── -->
+    <section id="download" class="section tinted">
+      <div class="wrap">
+        <div class="sec-head">
+          <p class="label">Download</p>
+          <h2>다운로드</h2>
+          <p class="sub">GitHub에 올라가 있는 최신 버전을 ZIP으로 바로 받거나, Git으로 받아요. 서버와 분석 엔진이 미리 빌드되어 있어 <b>npm install 없이</b> 바로 실행돼요.</p>
+        </div>
+
+        <div class="dl-main">
+          <div class="dl-app">
+            <span class="dl-icon"><img src="./images/donkey.svg" alt="" width="40" height="60"></span>
+            <div class="dl-app-text">
+              <span class="label">Windows · 소스 ZIP</span>
+              <h3>Donkey-Studio Mini <span data-version>0.1.0</span></h3>
+              <p>ZIP <b>약 220 KB</b> · 압축을 풀면 바로 실행 · GitHub <b>main</b> 최신본</p>
+            </div>
+            <div class="dl-app-actions">
+              <a class="btn primary big" data-zip><svg><use href="#i-down"/></svg>ZIP 내려받기</a>
+              <a class="repo-link" data-repo target="_blank" rel="noopener noreferrer">GitHub 저장소 보기<svg><use href="#i-out"/></svg></a>
+            </div>
+          </div>
+          <div class="dl-git">
+            <div>
+              <span class="label">Git</span>
+              <h3>Git으로 받기</h3>
+              <p>Git을 쓴다면 저장소를 복제해요. 새 버전이 나오면 폴더에서 <code>git pull</code> 한 번이면 끝.</p>
+            </div>
+            <div class="cmd" data-copy-wrap>
+              <code data-copy>git clone https://github.com/buddykorea79-cell/Donkey-Studio-mini.git</code>
+              <button class="copy" type="button" aria-label="명령 복사"><svg><use href="#i-copy"/></svg></button>
+            </div>
+          </div>
+        </div>
+
+        <div class="req">
+          <h4>함께 필요한 프로그램 <small>이미 있다면 건너뛰어요</small></h4>
+          <div class="req-grid">
+            <a class="req-item" href="https://nodejs.org/ko/download" target="_blank" rel="noopener noreferrer">
+              <span class="req-tag must">필수</span><b>Node.js 22 이상</b><small>앱 서버를 실행해요. LTS 버전이면 충분해요.</small><span class="req-go">nodejs.org<svg><use href="#i-out"/></svg></span>
+            </a>
+            <a class="req-item" href="https://www.gyan.dev/ffmpeg/builds/" target="_blank" rel="noopener noreferrer">
+              <span class="req-tag must">필수</span><b>FFmpeg</b><small>영상 분석·자르기·보정·저장을 맡아요. essentials 빌드면 돼요.</small><span class="req-go">gyan.dev<svg><use href="#i-out"/></svg></span>
+            </a>
+            <a class="req-item" href="https://ollama.com/download" target="_blank" rel="noopener noreferrer">
+              <span class="req-tag opt">선택</span><b>Ollama + 비전 모델</b><small>AI 장면 추천에 써요. 없으면 화질 점수만으로 추천해요.</small><span class="req-go">ollama.com<svg><use href="#i-out"/></svg></span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── 설치 ── -->
+    <section id="install" class="section">
+      <div class="wrap">
+        <div class="sec-head">
+          <p class="label">Installation</p>
+          <h2>설치 방법</h2>
+          <p class="sub">Windows 기준이에요. 처음 한 번만 준비하면, 다음부터는 아이콘 하나 더블클릭으로 열려요.</p>
+        </div>
+        <div class="install">
+          <div class="install-card">
+            <h3><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg>Windows에 설치하고 실행</h3>
+            <ol class="steps">
+              <li><b>Node.js와 FFmpeg 준비</b><span>시작 메뉴에서 <em>터미널</em>(또는 PowerShell)을 열고 아래 두 줄을 실행해요. 위의 공식 사이트에서 받아 설치해도 돼요.</span>
+                <div class="cmd multi" data-copy-wrap>
+                  <code data-copy>winget install --id OpenJS.NodeJS.LTS -e
+winget install --id Gyan.FFmpeg.Essentials -e</code>
+                  <button class="copy" type="button" aria-label="명령 복사"><svg><use href="#i-copy"/></svg></button>
+                </div>
+                <span class="tiny">확인: 새 터미널에서 <code>node -v</code> 가 v22 이상, <code>ffmpeg -version</code> 이 나오면 준비 끝.</span>
+              </li>
+              <li><b>ZIP 압축 풀기</b><span>받은 ZIP을 <em>오른쪽 클릭 → 속성</em>에서 <em>차단 해제</em>에 체크하고, <em>모두 압축 풀기</em>로 원하는 곳에 풀어요. 예: <code>D:\Donkey-Studio-Mini</code> (한글 경로도 괜찮아요)</span></li>
+              <li><b>실행</b><span>폴더 안의 <code>start-donkey-studio-mini.cmd</code> 를 더블클릭해요. 서버가 뒤에서 켜지고 브라우저에 <code>http://127.0.0.1:4310</code> 이 열려요. 이미 켜져 있으면 창만 다시 열어 줘요.</span></li>
+              <li><b>종료</b><span>진행 중인 작업을 취소한 뒤 <code>stop-donkey-studio-mini.cmd</code> 를 실행해요. 작업은 자동 저장돼서 다음에 이어서 할 수 있어요.</span></li>
+            </ol>
+            <div class="note"><b>“Windows의 PC 보호” 화면이 나오면</b> 인터넷에서 받은 실행 파일이라 그래요. <em>추가 정보 → 실행</em>을 누르거나, 2단계의 <em>차단 해제</em>를 하고 다시 풀어 주세요.</div>
+            <div class="note soft"><b>업데이트</b> 서버를 종료하고 새 ZIP을 같은 폴더에 덮어 풀면 돼요. 프로젝트(<code>data</code>)와 결과물(<code>output</code>) 폴더는 그대로 남아요.</div>
+          </div>
+          <div class="install-side">
+            <div class="install-card">
+              <h3><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 2.7 6.3L21 12l-6.3 2.7L12 21l-2.7-6.3L3 12l6.3-2.7Z"/></svg>AI 추천 연결 <small>선택 · Ollama</small></h3>
+              <p class="small">AI 추천은 내 PC에서 돌아가는 <b>Ollama</b> 비전 모델을 써요. 영상 프레임이 밖으로 나가지 않아요.</p>
+              <div class="cmd multi" data-copy-wrap>
+                <code data-copy>winget install --id Ollama.Ollama -e
+ollama pull qwen3-vl:4b</code>
+                <button class="copy" type="button" aria-label="명령 복사"><svg><use href="#i-copy"/></svg></button>
+              </div>
+              <ul class="ticks">
+                <li><code>qwen3-vl:4b</code> 는 검증에 쓴 가벼운 비전 모델이에요(약 3.3 GB). 설치된 비전 모델 중 <b>가장 작은 모델</b>이 기본으로 골라져요.</li>
+                <li>앱 오른쪽 위 연결 상태 버튼(<em>Ollama 연결됨</em>)을 누르면 FFmpeg·Ollama·모델 목록을 확인할 수 있어요.</li>
+                <li>Ollama가 없어도 괜찮아요. <em>장면 분석 모델</em>에서 <em>AI 없이 · 화질 점수로 선별</em>을 고르면 선명도·밝기·움직임 점수만으로 추천해요.</li>
+              </ul>
+              <figure class="mini-shot"><img src="./images/shot-connection.webp" alt="AI와 작업 환경 창: Ollama 비전 AI 연결됨(qwen3-vl:4b), FFmpeg 준비됨, 로컬 출력 폴더" width="1040" height="996" loading="lazy"></figure>
+            </div>
+            <div class="install-card env">
+              <h3><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 17h16M8 4v6M16 14v6"/></svg>고급 설정 <small>환경 변수</small></h3>
+              <table class="env-table">
+                <tbody>
+                  <tr><td><code>PORT</code></td><td>앱 주소의 포트 (기본 4310)</td></tr>
+                  <tr><td><code>FFMPEG_PATH</code></td><td>FFmpeg 실행 파일을 직접 지정</td></tr>
+                  <tr><td><code>OLLAMA_HOST</code></td><td>Ollama 주소 (기본 127.0.0.1:11434, 이 PC 주소만)</td></tr>
+                  <tr><td><code>MINI_DATA_DIR</code></td><td>프로젝트·업로드 복사본 폴더 (기본 <code>data</code>)</td></tr>
+                  <tr><td><code>MINI_OUTPUT_DIR</code></td><td>결과 영상 폴더 (기본 <code>output</code>)</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── 사용법 ── -->
+    <section id="usage" class="section tinted">
+      <div class="wrap">
+        <div class="sec-head">
+          <p class="label">How to use</p>
+          <h2>사용 방법</h2>
+          <p class="sub">영상을 넣고, 추천받고, 다듬고, 보정해서, 저장. 화면 위쪽의 <em>01 추천 클립 → 02 화질 보정 → 03 내보내기</em> 순서대로 따라가면 돼요.</p>
+        </div>
+
+        <div class="flow">
+          <div class="flow-row">
+            <div class="shot"><img src="./images/shot-import.webp" alt="첫 화면: 동키 캐릭터와 ‘첫 영상 가져오기’ 버튼, 왼쪽 영상 추가 영역, 오른쪽 추천 설정" width="1440" height="900" loading="lazy"></div>
+            <div class="flow-text">
+              <span class="flow-no">01</span>
+              <h3>영상 가져오기</h3>
+              <ul>
+                <li>왼쪽 <em>영상 1개 또는 여러 개</em>를 누르거나, 화면에 영상 파일을 끌어 놓아요.</li>
+                <li>MP4·MOV·MKV·WebM 등을 <b>여러 개 한꺼번에</b> 넣을 수 있어요. 가로·세로 영상을 섞어도 돼요.</li>
+                <li>원본은 그대로 두고 앱 폴더에 작업용 복사본을 만들어요. 목록에서 빼도 원본은 지워지지 않아요.</li>
+              </ul>
+            </div>
+          </div>
+          <div class="flow-row rev">
+            <div class="shot"><img src="./images/shot-recommend.webp" alt="추천 진행 중: 총길이 20초·클립 4초 설정, 분석할 원본 범위, 탐색 밀도, 장면 분석 모델, 아래쪽 ‘좋은 장면을 찾고 있어요’ 진행 창" width="1440" height="900" loading="lazy"></div>
+            <div class="flow-text">
+              <span class="flow-no">02</span>
+              <h3>AI 추천 받기</h3>
+              <ul>
+                <li>오른쪽에서 <em>완성할 영상의 총길이</em>와 <em>클립 한 개의 길이</em>(2~20초)를 정해요.</li>
+                <li>원본마다 <em>분석할 원본 범위</em>(시작·끝)를 좁힐 수 있어요. 이륙·착륙 장면을 빼고 싶을 때 좋아요.</li>
+                <li><em>탐색 밀도</em>(원본당 12·24·48구간)와 <em>장면 분석 모델</em>을 고르고 <em>추천 클립 만들기</em>를 누르면 진행률이 표시돼요. 언제든 <em>취소</em>할 수 있어요.</li>
+              </ul>
+            </div>
+          </div>
+          <div class="flow-row">
+            <div class="shot"><img src="./images/shot-trim.webp" alt="클립 모음: 클립 카드마다 AI 추천 배지·점수·장면 설명, 시작·끝 시간 입력, 순서 변경·삭제 버튼, 위쪽 현재 클립 구간 막대" width="1204" height="900" loading="lazy"></div>
+            <div class="flow-text">
+              <span class="flow-no">03</span>
+              <h3>클립 다듬기</h3>
+              <ul>
+                <li>클립 카드를 누르면 그 구간이 재생돼요. 점수와 AI가 본 장면 설명이 함께 보여요.</li>
+                <li>시작·끝 시간을 숫자로 입력하거나 막대로 조정하고, 체크를 풀어 빼거나 <em>직접 구간 추가</em>로 넣어요.</li>
+                <li>오른쪽 위·아래 화살표로 순서를 바꾸면 합본도 그 순서대로 이어져요. 휴지통은 목록에서 빼기.</li>
+              </ul>
+            </div>
+          </div>
+          <div class="flow-row rev">
+            <div class="shot"><img src="./images/shot-enhance.webp" alt="화질 보정: 보정 미리보기 배지가 붙은 노을 영상, 오른쪽 자연스럽게·선명하게·저조도 프리셋과 노이즈 감소·선명도·밝기·채도 슬라이더" width="1440" height="900" loading="lazy"></div>
+            <div class="flow-text">
+              <span class="flow-no">04</span>
+              <h3>화질 보정</h3>
+              <ul>
+                <li><em>02 화질 보정</em>에서 <em>자연스럽게 · 선명하게 · 저조도</em> 프리셋으로 시작해요.</li>
+                <li>노이즈 감소·선명도·밝기·채도를 슬라이더로 맞추고, 필요하면 <em>가벼운 흔들림 보정</em>을 켜요.</li>
+                <li><em>4초 보정 미리보기</em>는 현재 클립의 최대 4초를 실제로 처리해 보여 줘요. <em>원본 보기</em>로 전후를 비교해요.</li>
+              </ul>
+            </div>
+          </div>
+          <div class="flow-row">
+            <div class="shot-wrap">
+              <div class="shot"><img src="./images/shot-export.webp" alt="내보내기: 저장 방식(한 편으로 합치기·클립 각각 저장·합친 영상 + 개별 클립), 출력 해상도 1080p, 30fps, 6개 클립 총 23.5초, 영상 만들기 버튼" width="1440" height="900" loading="lazy"></div>
+              <img class="inset" src="./images/shot-outputs.webp" alt="영상이 준비되었어요: 개별 클립 MP4 6개와 합친 영상 Donkey-Studio-Mini_모음.mp4 다운로드 목록" width="1720" height="768" loading="lazy">
+            </div>
+            <div class="flow-text">
+              <span class="flow-no">05</span>
+              <h3>내보내기</h3>
+              <ul>
+                <li><em>03 내보내기</em>에서 저장 방식(<b>한 편으로 합치기 · 클립 각각 저장 · 둘 다</b>), 해상도(첫 번째 원본 크기 · 1080p · 4K), 프레임레이트(24·30·60fps)를 고르고 <em>영상 만들기</em>.</li>
+                <li>합본은 첫 번째로 선택한 원본의 화면 비율에 맞추고, 다른 비율의 영상은 여백을 넣어 맞춰요. 원본 소리도 유지돼요.</li>
+                <li>완성된 MP4는 화면의 목록에서 바로 받고, 앱 폴더의 <code>output</code> 에도 남아요.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="usage-grid">
+          <div class="card">
+            <h3>알아 두면 좋은 것 <small>AI와 화질</small></h3>
+            <ul class="ticks">
+              <li>AI 추천은 범위 안의 <b>샘플 구간</b>을 평가해요. 모든 프레임의 의미를 분석하지는 않아요.</li>
+              <li>AI 분석이 실패한 구간은 화질 점수로 대신하고, 화면에서 따로 구분해 보여 줘요.</li>
+              <li>목표 길이에 맞추려고 마지막 클립을 잘라요. 후보가 모자라면 실제로 확보한 길이를 알려 줘요.</li>
+              <li>화질 보정은 FFmpeg 필터예요. <b>AI 초해상도</b>나 사라진 디테일 복원은 아니고, 4K는 출력 크기 설정이에요.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>작업 공간 <small>저장 위치와 한도</small></h3>
+            <div class="facts">
+              <div><b>30개</b><span>원본 영상 수</span></div>
+              <div><b>32 GB</b><span>파일 하나 크기</span></div>
+              <div><b>1개씩</b><span>분석·변환 작업</span></div>
+            </div>
+            <p class="small">프로젝트와 업로드 복사본은 <code>data</code>, 결과는 <code>output</code> 폴더에 저장돼요. 편집 내용은 자동 저장되고, 저장에 실패하면 화면의 <em>저장 재시도</em>로 다시 저장해요.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── 질문 ── -->
+    <section id="faq" class="section">
+      <div class="wrap narrow">
+        <div class="sec-head">
+          <p class="label">FAQ</p>
+          <h2>자주 묻는 질문</h2>
+        </div>
+        <div class="faq">
+          <details><summary>인터넷이 꼭 필요한가요?</summary><p>프로그램과 AI 모델을 내려받을 때만 필요해요. 영상 처리와 AI 분석은 모두 이 PC에서 이뤄지고, 계정·클라우드 업로드·외부 영상 전송이 없어요.</p></details>
+          <details><summary>Ollama 없이도 쓸 수 있나요?</summary><p>네. 오른쪽 <em>장면 분석 모델</em>에서 <em>AI 없이 · 화질 점수로 선별</em>을 고르면 선명도·밝기·움직임 점수만으로 장면을 추천해요. 자르기·보정·내보내기는 똑같이 쓸 수 있어요.</p></details>
+          <details><summary>영상이 화면에서 재생되지 않아요.</summary><p>HEVC(H.265)처럼 브라우저가 재생하지 못하는 코덱이에요. 화면의 <em>호환 미리보기 만들기</em>를 누르면 가벼운 미리보기 영상을 만들어 보여 줘요. 변환 시간은 영상 길이에 비례하고, 내보내기는 항상 원본에서 처리해요.</p></details>
+          <details><summary>“FFmpeg를 찾지 못했습니다”라고 나와요.</summary><p>FFmpeg를 설치한 직후라면 열려 있던 터미널·런처를 닫고 다시 실행하거나 PC를 다시 시작해 보세요. 다른 위치에 있다면 환경 변수 <code>FFMPEG_PATH</code> 로 <code>ffmpeg.exe</code> 경로를 지정해요. 공유(shared) 빌드는 같은 폴더의 DLL도 함께 있어야 해요.</p></details>
+          <details><summary>실행했는데 앱이 열리지 않아요.</summary><p>런처 창에 <code>Node.js 22 or newer is required</code> 가 보이면 Node.js를 설치하거나 업데이트해요. <code>could not start</code> 가 보이면 앱 폴더의 <code>data\server-error.log</code> 를 열어 보세요. “포트가 사용 중”이라면 다른 프로그램이 4310 포트를 쓰고 있는 거예요. 그 프로그램을 끄거나 환경 변수 <code>PORT</code> 로 다른 번호를 지정해요.</p></details>
+          <details><summary>macOS나 Linux에서도 되나요?</summary><p>더블클릭 런처는 Windows용이에요. Node.js와 FFmpeg가 있다면 폴더에서 <code>npm start</code> 로 서버를 켜고 <code>http://127.0.0.1:4310</code> 을 열 수 있지만, 검증은 Windows에서만 했어요.</p></details>
+          <details><summary>원래 Donqui Studio와는 무엇이 다른가요?</summary><p>Donqui Studio의 V.Clip 장면 분석(프레임 추출·화질 점수·Ollama 비전)만 떼어 가볍게 만든 버전이에요. 녹화·음악·자막·AI 채팅·효과 편집기는 들어 있지 않아요.</p></details>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap footer-in">
+      <a class="back" href="../"><svg><use href="#i-back"/></svg>동키의 잡동사니로</a>
+      <span>Donkey-Studio Mini v<span data-version>0.1.0</span> · 동키의 5번째 잡동사니 · <a data-repo target="_blank" rel="noopener noreferrer">GitHub</a></span>
+    </div>
+  </footer>
+  <div id="toast" class="toast" role="status" hidden></div>
+  <script type="module" src="./studio.js"></script>
+</body>
+</html>
