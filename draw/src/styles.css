@@ -344,25 +344,15 @@ kbd { display: inline-block; min-width: 22px; padding: 1px 7px; border: 1px soli
 .cards-area { position: relative; flex: 1; overflow: hidden; }
 .card { position: absolute; left: 0; top: 0; padding: 0; border: 0; background: none;
   transition: transform var(--move, .8s) cubic-bezier(.2,.8,.2,1), opacity .45s, filter .45s; }
-.phase-idle .card { transition-timing-function: cubic-bezier(.45,0,.25,1); }
-.phase-shuffle .card, .phase-mix .card { transition-timing-function: ease-in-out; }
-.phase-pick .card.active { transition-timing-function: cubic-bezier(.2,.9,.25,1.12); }
-.card.active { z-index: 30; }
-.card.landing { z-index: 29; }
+.phase-ready .card { transition-timing-function: cubic-bezier(.45,0,.25,1); }
+.phase-shuffle .card { transition-timing-function: ease-in-out; }
 .card.flipped { cursor: default; }
-.cards-area.spot .card:not(.active):not(.landing) { opacity: .28; filter: saturate(.5); }
-.cards-glow { position: absolute; left: 50%; top: 50%; width: 80vmin; height: 80vmin; border-radius: 50%; z-index: 25; pointer-events: none;
-  background: radial-gradient(circle, #d9b45f50 0%, #d9b45f1a 38%, transparent 66%); opacity: 0; transform: translate(-50%, -50%) scale(.5); transition: opacity .5s, transform .9s cubic-bezier(.2,.8,.2,1); }
-.cards-glow.on { opacity: 1; transform: translate(-50%, -50%) scale(1); }
 /* 위치(.card) · 흔들림(.card-float) · 뒤집기(.card-inner)를 나눠 서로 덮어쓰지 않게 */
 .card-float { display: block; width: 100%; height: 100%; perspective: 1100px; }
-.card.floating .card-float { animation: bob 2.6s ease-in-out infinite alternate; animation-delay: calc(var(--d) * -2.6s); }
-.card.floating:hover .card-float { animation-play-state: paused; }
 .card.mixing .card-float { animation: shuffle .2s infinite alternate ease-in-out; animation-delay: calc(var(--d) * -.2s); }
-.card-inner { position: relative; display: block; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform .85s cubic-bezier(.3,1.25,.5,1) var(--fd, 0ms); }
+.card.flipped .card-float { animation: lift var(--flip, .9s) ease-out backwards; animation-delay: var(--fd, 0ms); }
+.card-inner { position: relative; display: block; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform var(--flip, .9s) cubic-bezier(.3,1.2,.5,1) var(--fd, 0ms); }
 .card.flipped .card-inner { transform: rotateY(180deg); }
-.card.active .card-front { box-shadow: 0 0 0 1px #d9b45f, 0 0 50px #f3dfaacc, 0 30px 60px #0009; }
-.card.active:not(.flipped) .card-back { box-shadow: 0 30px 60px #000a, 0 0 0 2px #f3dfaa, 0 0 40px #d9b45f99; }
 .card-back, .card-front { position: absolute; inset: 0; border-radius: 14px; backface-visibility: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; }
 .card-back { background:
     repeating-linear-gradient(45deg, #d9b45f14 0 1px, transparent 1px 12px),
@@ -370,7 +360,7 @@ kbd { display: inline-block; min-width: 22px; padding: 1px 7px; border: 1px soli
     linear-gradient(160deg, #1d2547, #0f1430);
   border: 1px solid #d9b45f99; box-shadow: 0 14px 32px #0008; }
 .card-frame { position: absolute; inset: 8px; border: 1px solid #d9b45f66; border-radius: 9px; }
-.phase-idle .card:not(.flipped):hover .card-back { box-shadow: 0 14px 32px #0008, 0 0 0 2px #f3dfaa; }
+.phase-ready .card:not(.flipped):hover .card-back { box-shadow: 0 14px 32px #0008, 0 0 0 2px #f3dfaa; }
 .card-q { font-family: var(--latin); font-style: italic; font-weight: 600; font-size: calc(var(--cw) * .46); line-height: 1; background: var(--gold-text); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .card-mark { color: var(--gold-2); font-size: calc(var(--cw) * .08); margin-top: 2px; opacity: .8; }
 .card-front { transform: rotateY(180deg); background: linear-gradient(170deg, #fffdf6, #f3e9d2); color: #141a33; border: 1px solid #fff; box-shadow: 0 0 0 1px #d9b45f, 0 0 36px #d9b45f77; gap: 4px; padding: 10px; }
@@ -381,7 +371,7 @@ kbd { display: inline-block; min-width: 22px; padding: 1px 7px; border: 1px soli
 .card-num { font-weight: 600; font-size: calc(var(--cw) * .2); color: var(--gold); line-height: 1; }
 .card-prize { font-size: calc(var(--cw) * .065); color: var(--muted); margin-top: 4px; max-width: 90%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 @keyframes shuffle { from { transform: translate(-4px, 2px) rotate(calc(var(--r) * -1)); } to { transform: translate(4px, -3px) rotate(var(--r)); } }
-@keyframes bob { from { transform: translateY(2px) rotate(calc(var(--r) * -.3)); } to { transform: translateY(-5px) rotate(calc(var(--r) * .3)); } }
+@keyframes lift { 0% { transform: none; } 45% { transform: translateY(-12px) scale(1.07); } 100% { transform: none; } }
 
 /* 로또 */
 .lotto { display: grid; grid-template-columns: 1fr 1.05fr; gap: 30px; min-height: 0; }
