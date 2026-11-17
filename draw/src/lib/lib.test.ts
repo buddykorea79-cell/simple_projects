@@ -259,3 +259,42 @@ describe('서바이벌 번호순 정렬', () => {
     expect(list.map(t => `${t.last4} ${t.name}`)).toEqual(['0042 김*수', '1000 이*희', '5678 가*나', '5678 홍*동']);
   });
 });
+
+import { LOTTO_MAX, recommendMethod, useDraw } from '../store';
+describe('로또 볼 인원 제한', () => {
+  const input = { roundNo: 1, label: '1차', prize: '', method: 'lotto' as const, progress: 'manual' as const, excludePrevWinners: true };
+  it(`최대 ${LOTTO_MAX}명까지만 뽑는다`, () => {
+    const ps = Array.from({ length: 30 }, (_, i) => P('p' + i, i + 1));
+    useDraw.getState().setData({ type: 'sample', loadedAt: '', stats: { totalRows: 30, duplicates: 0, invalid: 0, valid: 30 }, hasRaw: false }, ps);
+    expect(() => useDraw.getState().drawRound({ ...input, winnerCount: LOTTO_MAX + 1 })).toThrow(/최대 10명/);
+    expect(useDraw.getState().rounds).toHaveLength(0);
+    expect(useDraw.getState().drawRound({ ...input, winnerCount: LOTTO_MAX }).winners).toHaveLength(LOTTO_MAX);
+    useDraw.getState().resetAll();
+  });
+  it('11명부터는 로또를 추천하지 않는다', () => {
+    expect(recommendMethod(LOTTO_MAX)).toBe('lotto');
+    expect(recommendMethod(LOTTO_MAX + 1)).toBe('cards');
+  });
+});
+
+import { boardLayout } from '../animations/WinnerBoard';
+describe('당첨자 보드 배치', () => {
+  const fits = (W: number, H: number, n: number) => {
+    const L = boardLayout(W, H, n, 3);
+    expect(L.cols * L.rows).toBeGreaterThanOrEqual(n);
+    expect(L.cols * L.w + (L.cols - 1) * L.gap).toBeLessThanOrEqual(W);
+    expect(L.rows * L.h + (L.rows - 1) * L.gap).toBeLessThanOrEqual(H);   // 스크롤이 생기지 않는다
+    expect(L.font).toBeGreaterThan(0);
+    return L;
+  };
+  it('몇 명이든 스크롤 없이 한 화면에 들어간다', () => {
+    for (const [W, H] of [[1460, 560], [1100, 420], [358, 520]]) for (const n of [1, 3, 10, 37, 60, 150, 300, 800, 2000]) fits(W, H, n);
+  });
+  it('적으면 이름·번호 한 줄로 크게, 아주 많으면 번호만', () => {
+    const few = fits(1460, 560, 8);
+    expect(few.mode).toBe('row');
+    expect(few.font).toBeGreaterThanOrEqual(36);
+    expect(fits(1460, 560, 150).mode).toBe('stack');
+    expect(fits(1100, 420, 2000).mode).toBe('num');
+  });
+});

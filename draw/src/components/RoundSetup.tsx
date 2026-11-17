@@ -1,11 +1,11 @@
 import { useMemo, useState } from 'react';
-import { eligiblePool, recommendMethod, useDraw } from '../store';
+import { LOTTO_MAX, eligiblePool, recommendMethod, useDraw } from '../store';
 import type { Method, Round } from '../types';
 import { Icon, type IconName } from './Icon';
 
 export const METHODS: { id: Method; icon: IconName; name: string; fit: string; desc: string }[] = [
-  { id: 'lotto', icon: 'lotto', name: '로또 볼 추첨기', fit: '1~10명 · 대상 추첨', desc: '공이 유리 통 안에서 섞이다가 하나씩 굴러 나와요. 공에는 추첨번호(휴대폰 뒷 4자리).' },
-  { id: 'cards', icon: 'cards', name: '카드 뒤집기', fit: '10~60명', desc: '카드가 날아와 섞인 뒤 한 장씩 뒤집혀 이름과 추첨번호를 공개해요.' },
+  { id: 'lotto', icon: 'lotto', name: '로또 볼 추첨기', fit: `최대 ${LOTTO_MAX}명 · 대상 추첨`, desc: '공이 유리 통 안에서 섞이다가 하나씩 굴러 나와요. 오른쪽 명단에 당첨자가 한 줄씩 쌓여요.' },
+  { id: 'cards', icon: 'cards', name: '카드 뒤집기', fit: '10~60명', desc: '카드들이 쉬지 않고 자리를 바꾸다가, 한 장이 가운데로 뽑혀 나와 크게 뒤집히며 이름과 추첨번호를 공개해요.' },
   { id: 'survival', icon: 'survival', name: '서바이벌', fit: '수십~수백 명 · 대량 추첨', desc: '참가자 전원이 번호순으로 깔리고 3단계에 걸쳐 탈락자가 꺼져요. 단계마다 살아남은 사람을 번호순으로 다시 모아 크게 보여 줘요.' },
 ];
 
@@ -24,7 +24,8 @@ export function RoundSetup({ onStart }: { onStart(round: Round): void }) {
   const count = Number(countText);
   const countValid = Number.isInteger(count) && count >= 1 && count <= pool.length;
   const recommended = recommendMethod(countValid ? count : 1);
-  const chosen = method ?? recommended;
+  const lottoLocked = countValid && count > LOTTO_MAX;
+  const chosen = method && !(method === 'lotto' && lottoLocked) ? method : recommended;
   const excludedCount = participants.length - pool.length;
   const autoLabel = `${roundNo}차`;
   const dupRound = rounds.some(r => r.roundNo === roundNo);
@@ -95,11 +96,13 @@ export function RoundSetup({ onStart }: { onStart(round: Round): void }) {
       </section>
 
       <section className="panel">
-        <div className="panel-head"><div><span className="kicker">Method</span><h2>추첨 방식</h2><p className="sub">당첨 인원에 맞는 방식을 추천해 드려요. 어떤 방식이든 인원 제한은 없어요.</p></div></div>
+        <div className="panel-head"><div><span className="kicker">Method</span><h2>추첨 방식</h2><p className="sub">당첨 인원에 맞는 방식을 추천해 드려요. 로또 볼은 {LOTTO_MAX}명까지, 카드·서바이벌은 인원 제한이 없어요.</p></div></div>
         <div className="methods" role="radiogroup" aria-label="추첨 방식">
           {METHODS.map(m => (
-            <button key={m.id} role="radio" aria-checked={chosen === m.id} className={`method${chosen === m.id ? ' on' : ''}`} onClick={() => setMethod(m.id)}>
+            <button key={m.id} role="radio" aria-checked={chosen === m.id} className={`method${chosen === m.id ? ' on' : ''}`} onClick={() => setMethod(m.id)}
+              disabled={m.id === 'lotto' && lottoLocked} title={m.id === 'lotto' && lottoLocked ? `로또 볼은 ${LOTTO_MAX}명까지 뽑을 수 있어요` : undefined}>
               {recommended === m.id && <span className="badge">추천</span>}
+              {m.id === 'lotto' && lottoLocked && <span className="badge off">{LOTTO_MAX}명까지</span>}
               <span className="method-icon"><Icon name={m.icon} size={26} /></span>
               <strong>{m.name}</strong>
               <span className="fit">{m.fit}</span>

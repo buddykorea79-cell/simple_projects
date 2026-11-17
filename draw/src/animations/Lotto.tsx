@@ -229,7 +229,9 @@ export function Lotto({ pool, winners, prize, speed, advance, revealAll, auto, o
     sfx.fanfare(); celebrate(); onDone();
   });
 
-  const shownList = ordered.slice(0, revealed);
+  // 명단: 당첨 인원만큼 자리를 미리 깔아 두고 차례로 채운다. 10명까지 2열 × 5줄로 스크롤 없이.
+  const railCols = ordered.length > 5 ? 2 : 1;
+  const railRows = Math.max(5, Math.ceil(ordered.length / railCols));
 
   return (
     <div className="lotto">
@@ -241,25 +243,30 @@ export function Lotto({ pool, winners, prize, speed, advance, revealAll, auto, o
           {current ? (
             <>
               <span className="kicker">{current.order}번째 당첨{prize && ` · ${prize}`}</span>
-              <span className="lr-ball" style={{ background: `radial-gradient(circle at 32% 28%, #fff 0 8%, ${ballColor(current.last4)} 30%, ${shade(ballColor(current.last4), .45)} 100%)` }}><span>{current.last4}</span></span>
-              <b className="lr-name">{current.nameMasked}</b>
-              <span className="lr-num num4">{current.last4}</span>
+              <div className="lr-line">
+                <span className="lr-ball" aria-hidden="true" style={{ background: `radial-gradient(circle at 32% 28%, #fff 0 8%, ${ballColor(current.last4)} 30%, ${shade(ballColor(current.last4), .45)} 100%)` }} />
+                <b className="lr-name">{current.nameMasked}</b>
+                <span className="lr-num num4">{current.last4}</span>
+              </div>
             </>
           ) : (
             <span className="lr-wait">{busy ? '공이 섞이는 중…' : `${ordered.length}명 중 ${revealed}명 공개`}</span>
           )}
         </div>
-        {shownList.length > 0 && (
-          <ol className="lotto-rail">
-            {shownList.map(w => (
-              <li key={w.participantId}>
+        <ol className="lotto-rail" aria-label="당첨자 명단"
+          style={{ gridTemplateColumns: `repeat(${railCols}, minmax(0, 1fr))`, gridTemplateRows: `repeat(${railRows}, minmax(0, 1fr))` }}>
+          {ordered.map((w, i) => {
+            const shown = i < revealed;
+            return (
+              <li key={w.participantId} className={shown ? (i === revealed - 1 ? 'on latest' : 'on') : 'seat'}>
                 <span className="rail-no">{w.order}</span>
-                <b>{w.nameMasked}</b>
-                <span className="num4">{w.last4}</span>
+                {shown
+                  ? <><b>{w.nameMasked}</b><span className="num4">{w.last4}</span></>
+                  : <span className="rail-wait" aria-label="아직 공개 전">· · ·</span>}
               </li>
-            ))}
-          </ol>
-        )}
+            );
+          })}
+        </ol>
       </div>
     </div>
   );

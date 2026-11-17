@@ -66,6 +66,7 @@ export const useDraw = create<DrawState>()(persist((set, get) => ({
 
   drawRound: input => {
     const { participants, rounds } = get();
+    if (input.method === 'lotto' && input.winnerCount > LOTTO_MAX) throw new Error(`로또 볼 추첨기는 최대 ${LOTTO_MAX}명까지 뽑을 수 있어요. 카드 뒤집기나 서바이벌을 골라 주세요.`);
     const pool = eligiblePool(participants, rounds, input.excludePrevWinners);
     const winners = pickWinners(pool, input.winnerCount);
     const round: Round = {
@@ -105,8 +106,11 @@ export const useDraw = create<DrawState>()(persist((set, get) => ({
   partialize: s => ({ salt: s.salt, settings: s.settings, source: s.source && { ...s.source, hasRaw: false }, participants: s.participants, rounds: s.rounds }),
 }));
 
+/** 로또 볼 추첨기로 뽑을 수 있는 최대 인원 (오른쪽 명단이 스크롤 없이 한 화면에 들어오는 수) */
+export const LOTTO_MAX = 10;
+
 export function recommendMethod(count: number): Method {
-  if (count <= 10) return 'lotto';
+  if (count <= LOTTO_MAX) return 'lotto';
   if (count <= 60) return 'cards';
   return 'survival';
 }

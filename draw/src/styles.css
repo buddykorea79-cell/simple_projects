@@ -178,6 +178,8 @@ kbd { display: inline-block; min-width: 22px; padding: 1px 7px; border: 1px soli
 .method.on .desc { color: #c9c3b0; }
 .badge { position: absolute; top: 16px; right: 16px; font-family: var(--sans); color: #6f5214; background: var(--gold-soft); border: 1px solid #ebdcb9; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; }
 .method.on .badge { background: transparent; color: var(--champagne); border-color: #d9b45f80; }
+.badge.off { color: var(--muted); background: #f1eee6; border-color: var(--line); }
+.method:disabled:hover { transform: none; box-shadow: none; border-color: var(--line); }
 .progress-pick { margin-top: 24px; padding-top: 22px; border-top: 1px solid var(--line); }
 .progress-options { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .progress-opt { display: flex; align-items: center; gap: 14px; padding: 16px 18px; border: 1px solid var(--line); background: #fff; border-radius: 14px; text-align: left; transition: all .2s; }
@@ -303,44 +305,64 @@ kbd { display: inline-block; min-width: 22px; padding: 1px 7px; border: 1px soli
 .sv-tile.win { background: linear-gradient(180deg, #f6e4b3, #cfa654); border-color: #fff4d6; opacity: 1; transform: scale(1.05); box-shadow: 0 0 22px #d9b45f88; transition-delay: 0s; animation: none; }
 .sv-tile.win b, .sv-tile.win .num4 { color: #141a33; }
 .phase-board .sv-area { opacity: .04; transition: opacity .8s; }
+.phase-board .sv-bar { opacity: 0; pointer-events: none; transition: opacity .5s; }   /* 당첨자 보드가 화면 전체를 쓴다 */
 @keyframes tileIn { from { opacity: 0; transform: scale(.5); } }
 @keyframes shimmer { 0% { background: #ffffff10; border-color: #ffffff1a; } 100% { background: #d9b45f40; border-color: #f3dfaa99; } }
 @keyframes pulse { to { opacity: .55; } }
 
 /* 당첨자 보드 */
-.wb { position: absolute; inset: 86px 0 0; display: flex; flex-direction: column; align-items: center; gap: 18px; animation: rise .7s; }
+.wb { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; gap: 14px; animation: rise .7s; }
+/* 인원이 많으면 제목을 한 줄로 줄여 명단에 자리를 더 준다 */
+.wb.compact { gap: 10px; }
+.wb.compact .wb-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: center; column-gap: 14px; }
+.wb.compact .wb-head .kicker { font-size: 19px; margin: 0; }
+.wb.compact .wb-head h3 { margin: 0; font-size: 32px; }
+.wb.compact .wb-head h3 small { display: inline; margin-left: 10px; font-size: 17px; }
+.wb.compact .wb-note { margin: 0; }
 .wb-head { text-align: center; }
 .wb-head .kicker { color: var(--gold-2); font-size: 22px; }
 .wb-head h3 { margin: 2px 0 0; font-family: var(--serif); font-weight: 700; font-size: 42px; letter-spacing: -.5px; }
 .wb-head em { font-style: normal; font-family: var(--num); font-weight: 500; background: var(--gold-text); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .wb-head small { display: block; font-size: 18px; font-weight: 500; color: #c9c3b0; margin-top: 4px; font-family: var(--sans); }
-.wb-list { list-style: none; margin: 0; padding: 4px 4px 24px; width: 100%; overflow: auto; display: grid; gap: 12px; align-content: start; }
-.wb-list li { display: grid; grid-template-columns: auto 1fr auto; align-items: center; column-gap: 14px; background: linear-gradient(180deg, #1b2244f2, #121733f2); border: 1px solid #d9b45f40; border-radius: 16px; padding: 14px 18px; animation: rise .5s backwards; animation-delay: calc(var(--i) * 28ms); }
 .wb-note { margin: 6px 0 0; font-size: 13px; color: #b9b3a2; letter-spacing: .02em; }
-.wb-list.by-number li { grid-template-columns: 1fr auto; }
-.wb-no { width: 32px; height: 32px; border-radius: 50%; border: 1px solid #d9b45f80; color: var(--champagne); display: grid; place-items: center; font-family: var(--num); font-size: 13px; }
-.wb-name { font-weight: 800; color: #fbf6ea; letter-spacing: .02em; }
-.wb-num { font-weight: 500; background: var(--gold-text); -webkit-background-clip: text; background-clip: text; color: transparent; }
-.wb-list.lg { grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); }
-.wb-list.lg .wb-name, .wb-list.lg .wb-num { font-size: 38px; }
-.wb-list.md { grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); }
-.wb-list.md .wb-name, .wb-list.md .wb-num { font-size: 28px; }
-.wb-list.sm { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
-.wb-list.sm li { padding: 11px 14px; }
-.wb-list.sm .wb-name, .wb-list.sm .wb-num { font-size: 22px; }
-.wb-list.xs { grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 8px; }
-.wb-list.xs li { padding: 9px 12px; column-gap: 10px; border-radius: 12px; }
-.wb-list.xs .wb-no { width: 26px; height: 26px; font-size: 11px; }
-.wb-list.xs .wb-name, .wb-list.xs .wb-num { font-size: 18px; }
+/* 명단 영역 크기에 맞춰 칸 크기와 글자 크기(--fs)를 계산해 스크롤 없이 한 화면에 */
+.wb-fit { flex: 1; min-height: 0; width: 100%; display: flex; align-items: center; justify-content: center; padding-bottom: 10px; }
+.wb-list { list-style: none; margin: 0; padding: 0; display: grid; justify-content: center; align-content: center; font-size: var(--fs); line-height: 1.12; }
+.wb-list li { display: flex; align-items: center; gap: .5em; min-width: 0; overflow: hidden; background: linear-gradient(180deg, #1b2244f2, #121733f2); border: 1px solid #d9b45f40; border-radius: min(16px, .5em); padding: 0 .65em; animation: rise .5s backwards; animation-delay: calc(var(--i) * 28ms); }
+.wb-list.row li { justify-content: space-between; }
+.wb-list.stack li { flex-direction: column; justify-content: center; gap: .08em; padding: 0 .3em; }
+.wb-list.stack .wb-num { font-size: .9em; }
+.wb-list.num li { justify-content: center; padding: 0; border-radius: 5px; }
+.wb-no { flex: none; width: 1.9em; height: 1.9em; font-size: .5em; border-radius: 50%; border: 1px solid #d9b45f80; color: var(--champagne); display: grid; place-items: center; font-family: var(--num); }
+.wb-name { min-width: 0; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 800; color: #fbf6ea; letter-spacing: .02em; }
+.wb-list.row .wb-name { flex: 1; }
+.wb-num { flex: none; white-space: nowrap; font-weight: 500; background: var(--gold-text); -webkit-background-clip: text; background-clip: text; color: transparent; }
 @keyframes rise { from { opacity: 0; transform: translateY(18px); } }
 
 /* 카드 */
 .cards-stage { display: flex; }
-.cards-area { position: relative; flex: 1; overflow: hidden; perspective: 1600px; }
-.card { position: absolute; left: 0; top: 0; padding: 0; border: 0; background: none; transition: transform .8s cubic-bezier(.2,.8,.2,1); }
-.card.shuffling .card-inner { animation: shuffle .26s infinite alternate ease-in-out; }
-.card-inner { position: relative; display: block; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform .85s cubic-bezier(.3,1.25,.5,1); }
+.cards-area { position: relative; flex: 1; overflow: hidden; }
+.card { position: absolute; left: 0; top: 0; padding: 0; border: 0; background: none;
+  transition: transform var(--move, .8s) cubic-bezier(.2,.8,.2,1), opacity .45s, filter .45s; }
+.phase-idle .card { transition-timing-function: cubic-bezier(.45,0,.25,1); }
+.phase-shuffle .card, .phase-mix .card { transition-timing-function: ease-in-out; }
+.phase-pick .card.active { transition-timing-function: cubic-bezier(.2,.9,.25,1.12); }
+.card.active { z-index: 30; }
+.card.landing { z-index: 29; }
+.card.flipped { cursor: default; }
+.cards-area.spot .card:not(.active):not(.landing) { opacity: .28; filter: saturate(.5); }
+.cards-glow { position: absolute; left: 50%; top: 50%; width: 80vmin; height: 80vmin; border-radius: 50%; z-index: 25; pointer-events: none;
+  background: radial-gradient(circle, #d9b45f50 0%, #d9b45f1a 38%, transparent 66%); opacity: 0; transform: translate(-50%, -50%) scale(.5); transition: opacity .5s, transform .9s cubic-bezier(.2,.8,.2,1); }
+.cards-glow.on { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+/* 위치(.card) · 흔들림(.card-float) · 뒤집기(.card-inner)를 나눠 서로 덮어쓰지 않게 */
+.card-float { display: block; width: 100%; height: 100%; perspective: 1100px; }
+.card.floating .card-float { animation: bob 2.6s ease-in-out infinite alternate; animation-delay: calc(var(--d) * -2.6s); }
+.card.floating:hover .card-float { animation-play-state: paused; }
+.card.mixing .card-float { animation: shuffle .2s infinite alternate ease-in-out; animation-delay: calc(var(--d) * -.2s); }
+.card-inner { position: relative; display: block; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform .85s cubic-bezier(.3,1.25,.5,1) var(--fd, 0ms); }
 .card.flipped .card-inner { transform: rotateY(180deg); }
+.card.active .card-front { box-shadow: 0 0 0 1px #d9b45f, 0 0 50px #f3dfaacc, 0 30px 60px #0009; }
+.card.active:not(.flipped) .card-back { box-shadow: 0 30px 60px #000a, 0 0 0 2px #f3dfaa, 0 0 40px #d9b45f99; }
 .card-back, .card-front { position: absolute; inset: 0; border-radius: 14px; backface-visibility: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; overflow: hidden; }
 .card-back { background:
     repeating-linear-gradient(45deg, #d9b45f14 0 1px, transparent 1px 12px),
@@ -348,9 +370,9 @@ kbd { display: inline-block; min-width: 22px; padding: 1px 7px; border: 1px soli
     linear-gradient(160deg, #1d2547, #0f1430);
   border: 1px solid #d9b45f99; box-shadow: 0 14px 32px #0008; }
 .card-frame { position: absolute; inset: 8px; border: 1px solid #d9b45f66; border-radius: 9px; }
-.card:not(.flipped):hover .card-back { box-shadow: 0 14px 32px #0008, 0 0 0 2px #f3dfaa; }
-.card-no { font-family: var(--latin); font-weight: 600; font-size: calc(var(--cw) * .3); line-height: 1; background: var(--gold-text); -webkit-background-clip: text; background-clip: text; color: transparent; }
-.card-mark { color: var(--gold-2); font-size: calc(var(--cw) * .08); margin-top: 6px; opacity: .8; }
+.phase-idle .card:not(.flipped):hover .card-back { box-shadow: 0 14px 32px #0008, 0 0 0 2px #f3dfaa; }
+.card-q { font-family: var(--latin); font-style: italic; font-weight: 600; font-size: calc(var(--cw) * .46); line-height: 1; background: var(--gold-text); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.card-mark { color: var(--gold-2); font-size: calc(var(--cw) * .08); margin-top: 2px; opacity: .8; }
 .card-front { transform: rotateY(180deg); background: linear-gradient(170deg, #fffdf6, #f3e9d2); color: #141a33; border: 1px solid #fff; box-shadow: 0 0 0 1px #d9b45f, 0 0 36px #d9b45f77; gap: 4px; padding: 10px; }
 .card-front::before { content: ''; position: absolute; inset: 7px; border: 1px solid #d9b45f99; border-radius: 9px; pointer-events: none; }
 .card-order { font-family: var(--latin); font-style: italic; font-weight: 600; font-size: calc(var(--cw) * .1); color: var(--gold); }
@@ -359,25 +381,33 @@ kbd { display: inline-block; min-width: 22px; padding: 1px 7px; border: 1px soli
 .card-num { font-weight: 600; font-size: calc(var(--cw) * .2); color: var(--gold); line-height: 1; }
 .card-prize { font-size: calc(var(--cw) * .065); color: var(--muted); margin-top: 4px; max-width: 90%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 @keyframes shuffle { from { transform: translate(-4px, 2px) rotate(calc(var(--r) * -1)); } to { transform: translate(4px, -3px) rotate(var(--r)); } }
+@keyframes bob { from { transform: translateY(2px) rotate(calc(var(--r) * -.3)); } to { transform: translateY(-5px) rotate(calc(var(--r) * .3)); } }
 
 /* 로또 */
 .lotto { display: grid; grid-template-columns: 1fr 1.05fr; gap: 30px; min-height: 0; }
 .lotto-machine { position: relative; min-height: 0; cursor: pointer; }
 .lotto-machine canvas { position: absolute; inset: 0; }
-.lotto-side { display: flex; flex-direction: column; gap: 16px; min-height: 0; padding-bottom: 6px; }
-.lotto-reveal { flex: 1.4; min-height: 240px; border-radius: 26px; background: linear-gradient(180deg, #ffffff0a, #ffffff04); border: 1px solid #d9b45f2e; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; text-align: center; padding: 22px; position: relative; }
+.lotto-side { display: flex; flex-direction: column; gap: 14px; min-height: 0; padding-bottom: 6px; }
+/* 공개 칸: 이름과 추첨번호를 한 줄에 — 높이를 줄여 아래 명단 10칸이 스크롤 없이 들어가게 */
+.lotto-reveal { flex: none; height: clamp(124px, 23vh, 210px); border-radius: 22px; background: linear-gradient(180deg, #ffffff0a, #ffffff04); border: 1px solid #d9b45f2e; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; text-align: center; padding: 12px 20px; position: relative; overflow: hidden; }
 .lotto-reveal.show { background: radial-gradient(ellipse at 50% 30%, #d9b45f26, #ffffff05 70%); border-color: #d9b45f80; animation: pop .6s cubic-bezier(.3,1.5,.5,1); }
-.lotto-reveal .kicker { color: var(--gold-2); font-size: 22px; font-weight: 500; }
-.lr-ball { width: 86px; height: 86px; border-radius: 50%; display: grid; place-items: center; box-shadow: inset -6px -8px 16px #0005, 0 10px 30px #0007; animation: roll .8s cubic-bezier(.3,1.4,.5,1); margin: 6px 0 4px; }
-.lr-ball span { width: 62px; height: 46px; border-radius: 50%; background: #fbf8f1; color: #141a33; display: grid; place-items: center; font-family: var(--num); font-weight: 700; font-size: 19px; }
-.lr-name { font-weight: 900; font-size: clamp(60px, 7.6vw, 132px); line-height: 1.05; letter-spacing: .03em; color: #fffaf0; text-shadow: 0 6px 40px #d9b45f40; }
-.lr-num { font-weight: 500; font-size: clamp(54px, 6.6vw, 116px); line-height: 1.05; background: var(--gold-text); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.lotto-reveal .kicker { color: var(--gold-2); font-size: clamp(16px, 2.4vh, 22px); font-weight: 500; margin: 0; }
+.lr-line { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; column-gap: .32em; max-width: 100%; font-size: clamp(38px, min(4.6vw, 10vh), 100px); line-height: 1.08; }
+.lr-ball { width: .74em; height: .74em; border-radius: 50%; flex: none; box-shadow: inset -.06em -.08em .16em #0005, 0 .08em .3em #0007; animation: roll .8s cubic-bezier(.3,1.4,.5,1); }
+.lr-name { font-weight: 900; letter-spacing: .03em; color: #fffaf0; text-shadow: 0 6px 40px #d9b45f40; white-space: nowrap; }
+.lr-num { font-weight: 500; font-size: .9em; white-space: nowrap; background: var(--gold-text); -webkit-background-clip: text; background-clip: text; color: transparent; }
 .lr-wait { color: #b9b3a2; font-size: 18px; font-family: var(--serif); }
-.lotto-rail { flex: 1; min-height: 0; overflow: auto; list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px; align-content: start; }
-.lotto-rail li { display: flex; align-items: center; gap: 12px; background: #ffffff08; border: 1px solid #d9b45f2e; border-radius: 14px; padding: 10px 16px; animation: rise .45s; }
-.lotto-rail b { font-weight: 800; font-size: 22px; color: #fbf6ea; }
-.lotto-rail .num4 { margin-left: auto; font-size: 22px; font-weight: 500; color: var(--champagne); }
-.rail-no { width: 26px; height: 26px; border-radius: 50%; border: 1px solid #d9b45f80; color: var(--champagne); display: grid; place-items: center; font-family: var(--num); font-size: 12px; flex-shrink: 0; }
+/* 명단: 당첨 인원만큼 자리를 깔아 두고(최대 2열 × 5줄) 칸 높이에 맞춰 글자 크기를 정한다 */
+.lotto-rail { flex: 1; min-height: 0; overflow: hidden; list-style: none; margin: 0; padding: 0; display: grid; grid-auto-flow: column; gap: 8px 12px; }
+.lotto-rail li { container-type: size; display: flex; align-items: center; min-width: 0; background: #ffffff08; border: 1px solid #d9b45f2e; border-radius: 14px; padding: 0 14px; transition: border-color .4s, background .4s, box-shadow .4s; }
+.lotto-rail li.on { animation: rise .45s; }
+.lotto-rail li.latest { border-color: #f3dfaa; background: linear-gradient(90deg, #d9b45f2b, #ffffff08); box-shadow: 0 0 22px #d9b45f2e; }
+.lotto-rail li.seat { background: transparent; border-style: dashed; border-color: #d9b45f22; }
+.lotto-rail b { min-width: 0; margin-left: min(14px, 4cqw); font-weight: 800; font-size: clamp(13px, min(42cqh, 11cqw), 38px); color: #fbf6ea; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lotto-rail .num4 { margin-left: auto; padding-left: 10px; font-size: clamp(13px, min(40cqh, 10cqw), 36px); font-weight: 500; color: var(--champagne); white-space: nowrap; }
+.rail-no { width: clamp(20px, 54cqh, 36px); height: clamp(20px, 54cqh, 36px); border-radius: 50%; border: 1px solid #d9b45f80; color: var(--champagne); display: grid; place-items: center; font-family: var(--num); font-size: clamp(11px, 24cqh, 15px); flex-shrink: 0; }
+.lotto-rail li.seat .rail-no { opacity: .45; }
+.rail-wait { margin-left: auto; color: #6f6a5d; letter-spacing: .3em; font-size: clamp(12px, 28cqh, 20px); }
 @keyframes pop { from { transform: scale(.9); opacity: .2; } }
 @keyframes roll { from { transform: translateY(-140px) rotate(-220deg) scale(.6); } }
 
@@ -397,8 +427,8 @@ kbd { display: inline-block; min-width: 22px; padding: 1px 7px; border: 1px soli
   .stats div:nth-child(2) { border-right: 0; }
   .stats div:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
   .mapping-row { grid-template-columns: 1fr; }
-  .lotto { grid-template-columns: 1fr; grid-template-rows: 1fr 1.2fr; }
-  .lotto-reveal { min-height: 180px; }
+  .lotto { grid-template-columns: 1fr; grid-template-rows: 1fr 1.2fr; gap: 16px; }
+  .lotto-reveal { height: clamp(104px, 16vh, 150px); }
   .sv-bar { grid-template-columns: 1fr auto; }
   .sv-goal { display: none; }
   .mode-chip { display: none; }
@@ -430,7 +460,6 @@ kbd { display: inline-block; min-width: 22px; padding: 1px 7px; border: 1px soli
   .sv-stages li { padding: 4px; }
   .stage-hint { font-size: 13px; }
   .wb-head h3 { font-size: 28px; }
-  .wb-list.lg .wb-name, .wb-list.lg .wb-num { font-size: 28px; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; transition-delay: 0s !important; }
