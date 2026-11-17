@@ -2,6 +2,7 @@ import './seal-stars.js';
 
 // 서랍에 새 잡동사니를 넣으려면 이 배열에 항목을 하나 추가하면 됩니다.
 // external: true 이면 새 창(탭)으로 열립니다.
+// badge: 이름 옆 작은 표시 (외부 링크는 기본으로 '외부 링크')
 const projects = [
   {
     href: './draw/',
@@ -34,6 +35,7 @@ const projects = [
   {
     href: './cuenote/',
     name: 'CueNote',
+    badge: '모바일 앱',
     desc: '마크다운 한 장으로 무대를 진행하는 행사 큐시트 앱. 안드로이드 앱과 AI 스킬·샘플 MD를 내려받아요.',
     tags: ['안드로이드 앱', '큐시트', 'AI 스킬'],
     accent: '#c9a7ec',
@@ -43,6 +45,7 @@ const projects = [
   {
     href: './studio-mini/',
     name: 'Donkey-Studio Mini',
+    badge: 'Local',
     desc: '드론·액션캠 원본에서 AI가 좋은 장면을 골라 주고, 다듬고 보정해 MP4로 저장하는 내 PC 전용 영상 앱.',
     tags: ['Windows 앱', '영상 편집', '로컬 AI'],
     accent: '#ff9a5c',
@@ -60,6 +63,7 @@ document.getElementById('nav-count').textContent = `도구 ${projects.length}개
 
 projects.forEach((p, i) => {
   const a = document.createElement('a');
+  const badge = p.badge ?? (p.external ? '외부 링크' : '');
   a.className = `card${p.external ? ' external' : ''}`;
   a.href = p.href;
   if (p.external) { a.target = '_blank'; a.rel = 'noopener noreferrer'; }
@@ -70,7 +74,7 @@ projects.forEach((p, i) => {
       <span class="card-icon"><svg viewBox="0 0 24 24" aria-hidden="true">${p.icon}</svg></span>
       <span class="card-no">No. ${String(i + 1).padStart(2, '0')}</span>
     </div>
-    <h3>${p.name}${p.external ? '<span class="ext-badge">외부 링크</span>' : ''}</h3>
+    <h3>${p.name}${badge ? `<span class="ext-badge">${badge}</span>` : ''}</h3>
     <p class="card-desc">${p.desc}</p>
     <ol class="card-steps">${p.steps.map(s => `<li>${s}</li>`).join('')}</ol>
     <div class="card-foot">
